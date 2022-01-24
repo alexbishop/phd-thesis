@@ -1,0 +1,1420 @@
+\chapter{Formal Languages and Generating Functions}\label{chp:formal-language-and-automata}
+
+How can we describe and study the complexity of combinatorial structures?
+One answer is to use the theory of \emph{formal languages}, that is, after finding a bijection from our combinatorial structures to \emph{words} in a formal language, we may produce generating functions and computational descriptions. % for structures.
+
+A formal language is a set of words whose letters are taken from a finite set of abstract symbols $\Sigma$ known as an \emph{alphabet}, or equivalently, a formal language is a subset of the free monoid $\Sigma^*$.
+We collect formal languages into families, and study the computational complexity and the generating functions of languages in these families.
+
+In this chapter, we begin by recalling some basic definitions in formal language theory, in particular, we recall the Chomsky hierarchy in \cref{sec:grammars-and-automata}, and formal language generating functions in \cref{sec:generating-functions}.
+In \cref{sec:generating-functions} we describe the classes of \emph{rational}, \emph{algebraic}, and \emph{holonomic} generating functions.
+For each such class of generating functions we provide a family of formal languages with generating functions lying in the class, and an explicit example of such a language.
+We then define several particular language families which we require for the proofs and results in this thesis.
+In particular, we define the family of \emph{constrained languages}, \emph{blind multicounter languages}, and \emph{ET0L languages}.
+
+In \cref{sec:constrained-languages}, we define \emph{constrained languages} with a focus on the family of \emph{linearly constrained languages} introduced by \textcite{massazza1993}.
+It was shown by \textcite[Theorem~2]{massazza1993} that linearly constrained languages have holonomic generating functions.
+We return to constrained languages in \cref{chp:polyhedral} where we define the family of \emph{polyhedrally constrained languages}.
+This family of languages is used in the proof of \cref{thm:geodesic-growth}.
+
+In \cref{sec:blind-multicounter-automata} we study \emph{blind multicounter automata}.
+We say that a language is \emph{blind multicounter} if it is recognised by a blind multicounter automaton.
+In \cref{thm:virtually-abelian-are-blind-counter}, we show that the language of geodesics for a virtually abelian group, with respect to any finite weighted monoid generating set, is blind multicounter.
+
+Lastly, in \cref{sec:et0l-language} we study the family of \emph{ET0L languages}.
+ET0L languages and their deterministic counterpart, EDT0L, arise naturally in many areas of group theory~\cite{ciobanu2016a,ciobanu2018,ciobanu2019,evetts2020,diekert2017,ciobanu2020}.
+In \cref{chp:coword-problems} we see that this family is relevant to the well-studied class of groups known as \emph{bounded automata}.
+In particular, we show that the co-word problem for bounded automata groups is ET0L.
+Our proof relies on a machine model, known as a \emph{cspd} automaton, which is equivalent to the family of ET0L languages.
+In \cref{sec:et0l-language} we provide a self-contained proof of an equivalence between ET0L languages and cspd automata.
+We prove \cref{thm:bounded automata is ET0L} by constructing a cspd automaton for the co-word problem of a bounded automata group.
+
+\section{The Chomsky Hierarchy}%
+\label{sec:grammars-and-automata}
+
+The Chomsky hierarchy consists of four well-known families of languages which can be described by formal grammars with increasingly restrictive rules.
+In particular, the hierarchy comprises the families of \emph{recursively enumerable}, \emph{context-sensitive}, \emph{context-free} and \emph{regular languages}.
+Each family in the hierarchy has an equivalent machine model, which are arbitrary \emph{Turing machines}, \emph{linearly bounded automata}, \emph{pushdown automata}, and \emph{finite-state automata}, respectively.
+Moreover, the families in this hierarchy form a sequence of strict containment as seen in \cref{fig:chomsky-heirachy}.
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics{figure/chomsky-hierarchy}
+	\caption{The Chomsky hierarchy.}\label{fig:chomsky-heirachy}
+\end{figure}
+
+The standard reference for this hierarchy is the \citeyear{chomsky1959} paper by \textcite{chomsky1959}, in which these languages were studied with respect to the complexity of their corresponding \emph{formal grammars}.
+The class of Turing machines and family of recursively-enumerable languages were defined by \textcite{turing1936} in \citeyear{turing1936}, and \textcite{post1943} in \citeyear{post1943}, respectively.
+These concepts were shown to be equivalent in \citeyear{post1947} by \textcite{post1947}.
+The family of regular languages and class of finite-state automata were defined and shown to be equivalent in \citeyear{kleene1956} by \textcite{kleene1956} where they were studied in the context of \textit{nerve nets}.
+The family of context-free languages was shown to be equivalent to the class of pushdown automata independently by \textcite{chomsky1962} in \citeyear{chomsky1962} and \textcite{evey1963} in \citeyear{evey1963}.
+Lastly, in \citeyear{kuroda1964} it was shown by \textcite{kuroda1964} that the family of context-sensitive languages is equivalent to the class of languages recognised by a Turing machine with linearly bounded tape, that is, a Turing machine whose \textit{work tape} (i.e.~its memory) can only be linear in size with respect to the size of its input.
+For a more detailed history the reader is directed to~\cite{greibach1981}.
+
+In \cref{sec:intro-to-formal-lang} we define each family in the Chomsky hierarchy in terms of their grammars, and describe what it means for a context-free language to be unambiguous.
+Then, in \cref{sec:grammars-and-automata/automata} we define the class of finite-state automata.
+The concepts described in this section are preliminaries to our discussion of other families of languages discussed in this chapter, and are assumed in many of the proofs within this thesis.
+
+\subsection{Formal Grammars}\label{sec:intro-to-formal-lang}
+
+%Inspired by natural language, 
+A \emph{formal grammar} is a finite set of \emph{replacement rules} which describe how to build words in a language.
+There are many equivalent definitions of \emph{formal grammar} in the literature.
+We define a \emph{formal grammar} to be a $4$-tuple of the form $(\Sigma, V, S, P)$ where
+\begin{itemize}
+	\item $\Sigma$ is the alphabet of the language generated by the grammar;
+	\item $V$ is a finite set of \emph{non-terminal letters} which are disjoint from the letters in $\Sigma$;
+	\item $S \in V$ is the \emph{starting symbol}; and
+	\item $P$ is a finite set of replacement rules of the form $r \colon p \to q$ where $p,q \in (V \cup \Sigma)^*$.
+\end{itemize}
+For each replacement rule $r \colon p \to q$ and each word $\alpha p \beta$ where $\alpha,\beta \in (V \cup \Sigma)^*$, we may write $\alpha p \beta \to^r \alpha q \beta$, that is, our rule $r$ allows us to replace any instance of $p$ with $q$.
+For each sequence of replacement rules $\rho = r_1 r_2 \cdots r_k \in P^*$, we write $w \to^{\rho} \sigma$ if there is a finite sequence of words $w_1,w_2,\ldots,w_{k-1} \in (V \cup \Sigma)^*$ such that
+\[
+	w \to^{r_1} w_1 \to^{r_2} w_2 \to^{r_3} \cdots \to^{r_k} \sigma.
+\]
+The language generated by a formal grammar $(\Sigma,V,S,P)$ is then
+\[
+	L(\Sigma,V,S,P)
+	=
+	\{
+		w \in \Sigma^*
+	\mid
+		S \to^{\rho} w
+		\text{ where }
+		\rho \in P^*
+	\}.
+\]
+We classify formal grammars into four types based on the complexity of their replacement rules, in particular, every formal grammar is \emph{Type 0}, and a grammar is
+\begin{itemize}
+	\item \emph{Type 1} if each replacement rule has the form $\alpha A \beta \to \alpha \gamma \beta$ where $A \in V$ is a non-terminal, and $\alpha,\beta,\gamma \in (V \cup \Sigma)^*$ are words;
+	\item \emph{Type 2} if each rule has the form $A \to \alpha$ where $A \in V$ and $\alpha \in (V \cup \Sigma)^*$; and
+	\item \emph{Type 3} if each rule has the form $A \to \alpha$ or $A \to \alpha B$ where $A,B \in V$ and $\alpha \in \Sigma^*$.
+\end{itemize}
+The classes of Type 0, 1, 2 and 3 formal grammars correspond to the families of recursively enumerable, context-sensitive, context-free, and regular languages, respectively.
+
+\begin{notation}
+To simplify notation when presenting the replacement rules of a grammar, we often write $\alpha \to \beta_1\ |\ \beta_2\ |\ \cdots\ |\ \beta_k$ to denote the $k$ replacement rules $\alpha \to \beta_j$ for $j \in \{1,2,\ldots,k\}$, where $\alpha,\beta_1,\beta_2,\ldots,\beta_k \in (V \cup \Sigma)^*$.
+\end{notation}
+
+The productions of a Type 2 grammar can be represented as a tree, for example, let $D_2 = (\Sigma, V, S, P)$ be the Type 2 grammar given by
+\[
+	\Sigma = \{a,b\},\ 
+	V = \{S\},\ 
+	P=
+	\{
+		S \to aSbS\ |\ \varepsilon
+	\}.
+\]
+This is a grammar for the \emph{Dyck language}.
+The language corresponds to strings of matching open and closed brackets where $a$ is an open bracket, and $b$ is a close bracket.
+The word $aabaabbb$ is generated by the grammar $D_2$ and  can be encoded with the \emph{derivation tree} given in \cref{fig:dyck-language}.
+A derivation tree is a tree where the children of each node are ordered, the word produced by the tree is obtained by performing an \emph{in-order traversal} of its leaves.
+One can show that each word produced by the grammar $D_2$ will have exactly one derivation tree.
+A grammar is called \emph{unambiguous} if it has exactly one derivation tree for each of its words.
+Moreover, if a language has an unambiguous grammar, then we will say that the language itself is \emph{unambiguous}.
+Otherwise, if a language has no unambiguous grammar, then we say that it is \emph{inherently ambiguous}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics{figure/derivationTree}
+	\caption{Derivation tree for $aabaabbb$ in $D_2$}%
+	\label{fig:dyck-language}
+\end{figure}
+
+It is a result of \citeauthor{chomsky1963} that the generating function of any unambiguous context-free language is algebraic (see~\cref{lemma:chomsky-schutzenberger}).
+This result allows us to show that certain languages are inherently ambiguous.
+For example, let $L$ be the language
+\[
+	L
+	=
+	\{
+		w \in \{a, \overline{a}, b, \overline{b}\}^*
+	\mid
+		|w|_{a} = |w|_{\overline{a}}
+		\text{ or }
+		|w|_{b} = |w|_{\overline{b}}
+	\}.
+\]
+From \cite[296]{flajolet1987} it is known that the generating function of $L$ is
+\[
+	f(z)
+	=
+	\frac{2}{\pi}
+	\int_{0}^{\pi/2}
+		\frac{1}{
+			\sqrt{1-16z^2 \sin^2\theta}} \,\mathrm{d} \theta.
+\]
+It can be shown that $f(z)$ is not algebraic and thus $L$ is inherently ambiguous.
+
+\subsection{Finite-State Automata}\label{sec:grammars-and-automata/automata}
+
+The class of \emph{finite-state automata} is equivalent in expressive power to the family of regular languages, that is, each regular language is recognised by some finite-state automaton, and the language recognised by each finite-state automaton is regular~\cite[Theorm~1.54]{sipser2013}.
+
+A finite-state automaton is a finite directed edge-labelled graph with a distinguished initial vertex and a subset of the vertices labelled as \emph{accepting}.
+A word is accepted by a finite-state automaton if there is a path from its initial vertex to an accepting vertex where the edge labels can be composed to form the word.
+Formally, we define a finite-state automaton as follows.
+
+\begin{definition}\label{defn:fsa-definition}
+	A \emph{finite-state automaton} is a 5-tuple $M = (\Sigma, Q, A, q_0, \delta)$ where
+	\begin{itemize}
+		\item $\Sigma$ is the \emph{input alphabet};
+		\item $Q$ is a finite set of \emph{states};
+		\item $A \subseteq Q$ is the set of \emph{accepting states};
+		\item $q_0 \in Q$ is the \emph{initial state}; and
+		\item $\delta \subseteq Q \times \Sigma \times Q$ is a finite set known as the \emph{transition relation}. 
+	\end{itemize}
+	The word $w = w_1 w_2 \cdots w_k \in \Sigma^*$ is accepted by the finite-state automaton $M$ if there is a finite sequence of states $q_0, q_1, q_2, \ldots, q_k$ with $q_k \in A$ and $(q_i,w_{i+1},q_{i+1}) \in \delta$ for each $i \in \{0,1,2,\ldots,k-1\}$.
+	The set of all such words is the language recognised by $M$.
+	We can represent a finite-state automaton as a finite directed graph with vertex set $Q$ where for each $(p,\sigma,q) \in \delta$, there is an edge from $p$ to $q$ labelled with $\sigma$.
+\end{definition}
+
+For example, the language
+\[
+	L
+	=
+	\{
+		(ab)^n a^m
+	\mid
+		n,m \in \mathbb{N}_+
+	\}
+	\cup
+	\{
+		b^k
+	\mid
+		k \equiv 1\ (\bmod\ 3)
+	\}
+\]
+is regular as it is recognised by $M = (\Sigma,Q,A,q_0,\delta)$ where
+\begin{align*}
+	\Sigma &= \{a,b\},\ 
+	Q = \{q_0,q_1,q_2,q_3,q_4,q_5,q_6\},\
+	A = \{q_3,q_4\},\, 
+	\text{ and }\\
+	\delta &= \{
+		(q_0,a,q_1),\,
+		(q_0,b,q_4),\,
+		(q_1,b,q_2),\,
+		(q_2,a,q_1),\,
+		(q_2,a,q_3),\,\\&\phantom{= \{\ }
+		(q_3,a,q_3),\,
+		(q_4,b,q_5),\,
+		(q_5,b,q_6),\,
+		(q_6,b,q_4)
+	\}.
+\end{align*}
+This finite-state automaton corresponds to the graph in \cref{fig:example-fsa} where the double-circled nodes are accepting states.
+
+\begin{figure}[h!t]
+	\centering
+	\includegraphics{figure/fsa-example}
+	\caption{A finite-state automaton.}\label{fig:example-fsa}
+\end{figure}
+
+\section{Generating Functions}%
+\label{sec:generating-functions}
+
+In this section, we study the \emph{univariate} and \emph{multivariate generating functions} of formal languages.
+In particular, we study formal languages with \emph{rational} and \emph{holonomic  generating functions}, as defined in \cref{sec:formal-language/generating-functions/rational,sec:holonomic-functions}, respectively.
+Our aim in this section is to provide enough background in analytic combinatorics so that we may prove \cref{thm:geodesic-growth}.
+For a more complete introduction, the reader is directed to~\cite{flajolet2009}.
+
+The \emph{univariate} generating function of a language is the power series whose coefficients count the number of words of a given length, that is, the power series defined as follows.
+
+\begin{definition}\label{defn:univariate-generating-function}
+	The \emph{univariate generating function} of a language $L \subseteq \Sigma^*$ is the formal power series $f(z) = \sum_{n=0}^\infty c_n z^n$ where each coefficient $c_n = \#\{w \in L \mid |w|_\Sigma = n\}$.
+\end{definition}
+
+The \emph{multivarate generating function} of a language is the multivariate power series whose terms correspond to the number of occurrences of each letter in a word.
+To define these series, we first introduce the \emph{Parikh map} as follows.
+
+\begin{definition}\label{defn:parikh-image}
+	Let $\Sigma = \{\sigma_1, \sigma_2, \ldots, \sigma_m\}$ be an ordered alphabet, then the \emph{Parikh map} is the homomorphism $\Phi_\Sigma\colon \Sigma^* \to \mathbb{N}^m$ such that, for each word $w \in \Sigma^*$, we have
+	\[
+		\Phi_\Sigma(w) = (|w|_{\sigma_1},|w|_{\sigma_2},\ldots,|w|_{\sigma_m})
+	\]
+	where $|w|_{\sigma_i}$ counts the number of occurrences of $\sigma_i$ in $w$.
+\end{definition}
+
+We may then define the multivariate generating function of a language as follows.
+
+\begin{definition}\label{defn: multivariate-generating-function}
+	The \emph{multivariate generating function} of a language $L \subseteq \Sigma^*$ over an alphabet $\Sigma = \{\sigma_1,\sigma_2,\ldots,\sigma_m\}$ is the formal multivariate power series
+	\[
+		f(x_1,x_2,\ldots,x_m)
+		=
+		\sum_{(n_1,n_2,\ldots,n_m) \in \mathbb{N}^m}
+			c(n_1,n_2,\ldots,n_m)\,
+			x_1^{n_1} x_2^{n_2} \cdots x_m^{n_m}
+	\]
+	where each coefficient
+	\[
+		c(n_1,n_2,\ldots,n_m)
+		=
+		\#\{
+			w \in L
+			\mid
+			\Phi_\Sigma(w) = (n_1,n_2,\ldots,n_m)
+		\}
+	\]
+	counts the number of words with a given Parikh image.
+\end{definition}
+
+In the following subsections, we study classes of power series with increasing generality.
+In particular, we study the classes of \emph{rational}, \emph{algebraic}, and \emph{holonomic} power series.
+For each of these classes of power series, we provide a family of formal languages such that the generating function of each language in the family lies within the class.
+In the following subsections, we write the notation $\mathbf{x} = (x_1,x_2,\ldots,x_m)$.
+
+\subsection{Rational Power Series}%
+\label{sec:formal-language/generating-functions/rational}
+
+A (multivariate) power series $f(\mathbf{x})$ is \emph{rational} if there are two polynomials $p(\mathbf{x})$ and $q(\mathbf{x})$, where $q(\mathbf{x})$ is nontrivial, such that $q(\mathbf{x})f(\mathbf{x}) = p(\mathbf{x})$.
+We denote this as $f(\mathbf{x}) = p(\mathbf{x})/q(\mathbf{x})$.
+
+It is known that the (multivariate) generating function for a regular language is rational.
+For example, the regular language
+\[
+	L
+	=
+	\{
+		a^i (ab)^j
+	\mid
+		i,j \in \mathbb{N}
+	\}
+\]
+has a multivariate generating function given by
+\[
+	\sum_{i=0}^\infty
+	\sum_{j=0}^\infty
+	x^i  \, (xy)^j
+	=
+	\left(
+		\sum_{i=0}^\infty
+		x^i
+	\right)
+	\left(
+		\sum_{j=0}^\infty
+		(xy)^j
+	\right)
+	=
+	\frac{1}{(1-x)(1-xy)}.
+\]
+
+A useful property of univariate rational functions is that we may always find closed-form equations for their asymptotic behaviour, in particular, we have the following result.
+
+\begin{lemma}[Theorem~IV.9~in~\cite{flajolet2009}]\label{lemma:rational-polynomial-exponential}
+	Suppose that $f(z) = \sum_{n=0}^\infty c_n z^n$ is rational with singularities at $\alpha_1,\alpha_2,\ldots,\alpha_k \in \mathbb{C}$.
+	Then there are polynomials $p_1(n),\ldots,p_k(n)\in \mathbb{C}[z]$ such that for each sufficiently large $n$ we have $c_n = \sum_{j = 0}^k p_i(n) \alpha_j^{-n}$.
+\end{lemma}
+
+Since the coefficients of univariate generating functions count words, we see that they have integer coefficients, and thus we may apply the P\'olya-Carlson theorem as follows.
+
+\begin{lemma}[{\textcite[p.~3]{carlson1921}}]\label{lemma:polya-carlson}
+	If $f(z)$ is a power series with integer coefficients that is complex analytic in the open unit disc, then $f(z)$ either has the unit circle as its natural boundary or is rational of the form $p(z)/(1-z^m)^n$ where $p(z) \in \mathbb{Z}[z]$ and $n,m \in \mathbb{N}$.
+\end{lemma}
+
+From \cref{lemma:polya-carlson} we have the following characterisation of geodesic growth series with finitely many singularities.
+We make use of this corollary to prove \cref{lemma:holonomic-growth-series} which we then use in the proof of \cref{thm:geodesic-growth}.
+
+\begin{corollary}\label{cor:dichotomy-of-characterisation}
+	Let $G$ be a group with a finite (weighted monoid) generating set $S$.
+	If the geodesic growth series $f_S(z) = \sum_{n=0}^\infty \gamma_S(n) z^n$ has finitely many singularities, then $G$ either has exponential geodesic growth with respect to $S$, or  $f_S(z)$ is rational and $G$ has polynomial geodesic growth of an integer degree with respect to $S$.
+\end{corollary}
+
+\begin{proof}
+	From \cref{lemma:fekete} we see that either the geodesic growth function $\gamma_S(n)$ has exponential growth or the geodesic growth rate $\alpha_S = \lim_{n \to \infty} \sqrt[n]{\gamma_S(n)} = 1$.
+	In the latter case we apply \cref{lemma:polya-carlson} to show that $f_S(z)$ is a rational with singularities only at the $m$-th roots of unity for some $m \in \mathbb{N}$.
+	From \cref{lemma:rational-polynomial-exponential}, we have
+	\begin{equation}\label{eq:cor0}
+		\gamma_S(n) = \sum_{j = 1}^{k} p_j(n)
+		\left(
+			e^{ 2 \pi i \cdot j/m}
+		\right)^{-n}
+	\end{equation}
+	for each sufficiently large $n$, were each $p_j(z)$ is a polynomial.
+	
+	Since the geodesic growth function, $\gamma_S(n)$, is non-decreasing we have
+	\begin{equation}\label{eq:cor1}
+		\gamma_S(n)
+		\leqslant
+		\gamma_S(mn)
+		=
+		\sum_{j=1}^{k} p_j(mn)
+	\quad
+	\text{and}
+	\quad
+		\gamma_S(n)
+		\geqslant
+		\gamma_S( m \lfloor n/m \rfloor )
+		=
+		\sum_{j=1}^{k} p_j(m \lfloor n/m \rfloor)
+	\end{equation}
+	for sufficiently large $n$.
+	
+	Let $d$ be the largest degree of any polynomial $p_i(z)$ in \eqref{eq:cor0}.
+	Then, from the inequalities in \eqref{eq:cor1} we see that there are positive constants $\alpha_1,\alpha_2 \in \mathbb{R}_{>0}$ such that
+	\[
+		\alpha_1 n^d
+			\leqslant
+		\gamma_S(n)
+			\leqslant
+		\alpha_2 n^d
+	\]
+	for every $n \in \mathbb{N}$.
+	These bounds follow since $\gamma_S(0) = 1$ and $\gamma_S(n)$ is nondecreasing.
+\end{proof}
+
+\subsection{Algebraic Power Series}\label{sec:algebraic-functions}
+
+A (multivariate) power series $f(\mathbf{x})$ is \emph{algebraic} if there exists some nontrivial polynomial $a(\mathbf{x},y) \in \mathbb{C}[\mathbf{x},y]$ such that $f(\mathbf{x})$ satisfies the equation $a(\mathbf{x}, f(\mathbf{x})) = 0$.
+Notice that each rational function $f(\mathbf{x}) = p(\mathbf{x})/q(\mathbf{x})$ is also algebraic as can be seen from the choice of polynomial $a(\mathbf{x},y) = q(\mathbf{x}) y - p(\mathbf{x})$.
+We have the following formal language characterisation.
+
+\begin{lemma}[\textcite{chomsky1963}]\label{lemma:chomsky-schutzenberger}
+	The (multivariate) generating function of an unambiguous context-free language is algebraic.
+\end{lemma}
+
+For example, the context-free language
+\[
+	L = \{w \in \{a,b\}^* \mid |w|_a = |w|_b \}
+\]
+has an algebraic multivariate generating function
+\[
+	f(x,y)
+	=
+	\sum_{k=0}^\infty \binom{2k}{k} x^k y^k
+	=
+	\frac{1}{\sqrt{1 - 4 x y}}.
+\]
+This equality is given in \cite[Eq.~(2.5.11) on p.~53]{wilf1994}.
+  %2.47 p 57
+
+\subsection{Holonomic Power Series}\label{sec:holonomic-functions}
+
+In this subsection we provide a background to the class of \emph{holonomic} power series.
+Some authors use the term \emph{D-finite} or \emph{differentiably finite} to refer to the class of single-variable holonomic functions, or as a synonym for holonomic.
+This class of power series is interesting due to its closure properties, and that the coefficients of a univariate holonomic power series are \textit{easy} to compute, i.e., the sequence of coefficients satisfies a recurrence relation with polynomial coefficients known as a \emph{P-recurrence}~\cite[748]{flajolet2009}.
+In \cref{sec:linear-constraints} we study the family of \emph{linearly constrained languages} which have holonomic (multivariate) generating functions.
+We extend this result in \cref{chp:polyhedral} to the family of \emph{polyhedrally constrained languages}.
+In \cref{thm:geodesic-growth}, we use polyhedrally constrained languages to show that the geodesic growth series of each virtually abelian group is holonomic.
+
+A (multivariate) generating function $f(\mathbf{x})$ is \emph{holonomic} if the span of
+\[
+	X_f=
+	\left\{
+		\partial_{x_1}^{k_1} \partial_{x_2}^{k_2} \cdots \partial_{x_m}^{k_m}
+		f(\mathbf{x})
+	\ \middle\vert\ 
+		k_1,k_2,\ldots,k_m \in \mathbb{N}
+	\right\}
+\]
+over $\mathbb{C}(\mathbf{x})$ is a finite-dimensional vector space $V_f \subseteq \mathbb{C}((\mathbf{x}))$, or equivalently, $f(\mathbf{x})$ is holonomic if it is a solution to a system of differential equations of the form
+\begin{align*}
+	\partial_{x_1}^{k_1 + 1} f(\mathbf{x})
+	+ r_{1,k_1}(\mathbf{x}) \, \partial_{x_1}^{k_1}  f(\mathbf{x})
+	+ \cdots
+	+ r_{1,1}(\mathbf{x}) \, \partial_{x_1} f(\mathbf{x})
+	+ r_{1,0}(\mathbf{x}) f(\mathbf{x})
+	&=
+	0
+	\\
+	\partial_{x_2}^{k_2 + 1} f(\mathbf{x})
+	+ r_{2,k_2}(\mathbf{x}) \, \partial_{x_2}^{k_2}  f(\mathbf{x})
+	+ \cdots
+	+ r_{2,1}(\mathbf{x}) \, \partial_{x_2} f(\mathbf{x})
+	+ r_{2,0}(\mathbf{x}) f(\mathbf{x})
+	&=
+	0
+	\\
+	&\vdots
+	\\
+	\partial_{x_m}^{k_m + 1} f(\mathbf{x})
+	+ r_{m,k_m}(\mathbf{x}) \,\partial_{x_m}^{k_m}  f(\mathbf{x})
+	+ \cdots
+	+ r_{m,1}(\mathbf{x}) \,\partial_{x_m} f(\mathbf{x})
+	+ r_{m,0}(\mathbf{x}) f(\mathbf{x})
+	&=
+	0
+\end{align*}
+where each $r_{i,j}(\mathbf{x}) \in \mathbb{C}(\mathbf{x})$ is a rational function.
+Notice here that there is one differential equation for each independent variable $x_i$.
+This equivalent definition is the reason that some authors prefer the name D-finite and 
+differentiably finite.
+
+The class of holonomic power series satisfy many nice closure properties, however, in this thesis we only require the following.
+
+\begin{lemma}[Proposition~2.3~in~\cite{lipshitz1989}]\label{lemma:holonomic-closure-properties}
+	The class of holonomic power series over the variables $\mathbf{x}$ is closed under addition and multiplication.
+	If $f(\mathbf{x})$ is a holonomic power series with $\mathbf{x} = (x_1,x_2,\ldots,x_m)$, and $a_1(\mathbf{y}), a_2(\mathbf{y}), \ldots, a_m(\mathbf{y})$ are algebraic power series, then $g(\mathbf{y}) = f(a_1(\mathbf{y}),a_2(\mathbf{y}),\ldots,a_m(\mathbf{y}))$ is also holonomic if it is defined.
+	Each algebraic power series (and thus each rational function) is holonomic.
+\end{lemma}
+
+For univariate holonomic power series with integer coefficients, we may also apply P\'olya-Carlson theorem, as given in \cref{lemma:polya-carlson}.
+That is, holonomic functions may have only finitely many singularities as in the following lemma.
+
+\begin{lemma}[Theorem~1 in \cite{flajolet2005}]\label{lemma:holonomic-power-series-poles}
+	A univariate holonomic function may only have finitely many singularities.
+\end{lemma}
+
+\section{Constrained Languages}\label{sec:constrained-languages}
+
+\emph{Linearly constrained languages}, defined below in \cref{sec:linear-constraints}, were introduced by \textcite{massazza1993} as an example of a family of languages with holonomic univariate generating functions.
+In this section, we define the more general class of \emph{constrained languages}, and show that Massazza's result holds for multivariable generating functions.
+In \cref{chp:polyhedral} we provide a new generalisation of linearly constrained languages, known as \emph{polyhedrally constrained}, which we use in the proof of \cref{thm:geodesic-growth}.
+
+\begin{definition}\label{defn:constrained-language}
+Let $U \subseteq \Sigma^*$ be an unambiguous context-free language and let $\mathcal{C} \subseteq \mathbb{Z}^{|\Sigma|}$, then
+$
+	L(U,\mathcal{C})
+	=
+	\{
+		w \in U
+		\mid
+		\Phi_\Sigma(w) \in \mathcal{C}
+	\}
+$
+is a \emph{constrained language} (where $\Phi_\Sigma\colon \Sigma^* \to \mathbb{N}^{|\Sigma|}$ is the Parikh map as given in \cref{defn:parikh-image}).
+\end{definition}
+
+We then study families of constrained languages by placing restrictions on the sets $\mathcal{C} \subseteq \mathbb{Z}^n$.
+Informally, the family of \emph{linearly constrained languages} results from requiring that $\mathcal{C}$ corresponds to the integer solutions of a system of linear equations.
+
+\subsection{Linear Constraints}\label{sec:linear-constraints}
+
+Modifying the notation of \textcite{massazza1993}, we define \emph{$n$-atoms} and \emph{$n$-constraints} as follows.
+
+\begin{definition}\label{defn:n-constraints}
+A subset of $\mathbb{Z}^{n}$ is an \emph{$n$-atom} if it can be expressed as
+$
+	\{
+		v \in \mathbb{Z}^{n}
+	\mid
+		a \cdot v = b
+	\}
+$
+or
+$ 
+	\{
+		v \in \mathbb{Z}^{n}
+	\mid
+		a \cdot v > b
+	\}
+$
+where $a \in \mathbb{Z}^{n}$ and $b \in \mathbb{Z}$.
+An \emph{$n$-constraint} is a Boolean expression of $n$-atoms, that is, a finite expression of $n$-atoms using intersection, union, and complement with respect to $\mathbb{Z}^{n}$.
+\end{definition}
+
+For example,
+\[
+	\{
+		(x,y) \in \mathbb{Z}^{2}
+	\mid
+	\text{either }
+		x = 1 \text{ and } y > 10,
+	\text{ or }
+		x \neq 1\text{ and }2x-3y>4
+\}
+\]
+is a $2$-constraint as it can be written as the Boolean expression
+\begin{multline*}
+	\{ v \in \mathbb{Z}^{2} \mid (1,0)\cdot v = 1 \} \cap
+	\{ v \in \mathbb{Z}^{2} \mid (0,1)\cdot v > 10 \}\\
+	\cup
+	\left(
+		\mathbb{Z}^{2}\setminus
+		\{ v \in \mathbb{Z}^{2} \mid (1,0)\cdot v = 1 \}
+	\right)
+	\cap
+	\{ v \in \mathbb{Z}^{2} \mid (2,-3)\cdot v > 4 \}.
+\end{multline*}
+
+\Citeauthor{massazza1993} defined the family of \emph{linearly constrained languages} as follows.
+
+\begin{definition}\label{defn:linearly-constrained-language}
+	If $\mathcal{C}$ is an $n$-constraint, then $L(U,\mathcal{C})$ is a \emph{linearly constrained language}.
+\end{definition}
+
+\Textcite{massazza1993} introduced linearly constrained languages as a family of languages with holonomic univariate generating functions.
+\Citeauthor{massazza1993} proved this by first showing that linearly constrained languages have holonomic multivariate generating functions.
+Thus, we have the more general result given in \cref{prop:lcl-is-holonomic}.
+
+\begin{proposition}\label{prop:lcl-is-holonomic}
+	The multivariate generating function of a linearly constrained language is holonomic.
+\end{proposition}
+
+\begin{proof}
+	See the proof of Theorem~2~in \cite{massazza1993}.
+\end{proof}
+
+For example, let $L = L(U,\mathcal{B})$ be the linearly constrained language with
+\[
+		U = \{a,b,c\}^*
+	\quad
+	\text{and}
+	\quad
+		\mathcal{B} =
+		\{
+			(n,n,n) \in \mathbb{Z}^3
+		\mid
+			n \in \mathbb{N}
+		\}.
+\]
+It was shown in \cite[Example~2]{massazza1993} that $L$ has a multivariate generating function of
+\[
+	f(x,y,z)
+	=
+	\sum_{n \in \mathbb{N}}
+	\frac{(3n)!}{(n!)^3}
+	x^n y^n z^n.
+\]
+From \cref{prop:appendix/holonomic-function} (see the appendix), we see that $f(x,y,z)$ satisfies the system of differential equations
+\begin{align*}
+		(x^2 - 27 x^3 y z) \partial_x^2 f(x,y,z)
+		+ (x - 54 x^2 y z) \partial_x f(x,y,z)
+		- 6 x y z \, f(x,y,z)
+		&= 0
+	\\
+		(y^2 - 27 x y^3 z) \partial_y^2 f(x,y,z)
+		+ (y - 54 x y^2 z) \partial_y f(x,y,z)
+		- 6 x y z \, f(x,y,z)
+		&= 0
+	\\
+		(z^2 - 27 x y z^3) \partial_z^2 f(x,y,z)
+		+ (z - 54 x y z^2) \partial_z f(x,y,z)
+		- 6 x y z \, f(x,y,z)
+		&= 0.
+\end{align*}
+Hence, the generating function $f(x,y,z)$ is holonomic.
+
+\section{Blind Multicounter Automata}\label{sec:blind-multicounter-automata}
+
+The class of \emph{blind multicounter automata} was introduced by \textcite{greibach1978}, where they were shown \cite[Theorem~2]{greibach1978} to be equivalent in expressive power to the class of \emph{reversal-bounded multicounter automata} as introduced by \textcite{baker1974}.
+Moreover, it was shown in \cite[\S~2.2]{klaedtke2002} that the class of reversal-bounded multicounter automata, and thus the class of \emph{blind multicounter automata}, are equivalent in expressive power to the class of \emph{Parikh automata} introduced by \textcite{klaedtke2003}.
+
+We say that a language is \emph{blind multicounter} if it is accepted by a \emph{blind multicounter automata}.
+It was shown by \textcite{elder2008} that the word problem of a group is blind multicounter if and only if the group is virtually abelian.
+In \cref{thm:virtually-abelian-are-blind-counter} we show that the language of geodesics for a virtually abelian group is blind multicounter.
+
+Informally, a \emph{blind $k$-counter automaton} is a nondeterministic finite-state acceptor with a one-way input tape and $k$ integer counters.
+The machine is allowed to increment and decrement its counters by fixed amounts during transitions where each transition does not depend on the state of the counters.
+A computation of a blind $k$-counter automata begins with zero on all its counters, and accepts when it is in an accepting state with all input consumed and zero on each counter.
+A language $L$ is called \emph{blind multicounter} if it is accepted by a blind $k$-counter automaton for some $k \in \mathbb{N}$.
+The family of blind multicounter languages satisfies the hierarchy given in \cref{fig:language-hierarchy}.
+We prove the correctness of this diagram at the end of this section, that is, after we provide the formal definition of blind multicounter language in \cref{defn:blind-multicounter}.
+
+\begin{figure}[h!t]
+	\centering
+	\includegraphics{figure/mulicounterLanguageHierarchy}
+	\caption{Hierarchy of blind multicounter language.}\label{fig:language-hierarchy}
+\end{figure}
+
+Our definition of a blind multicounter automaton differs slightly from the one given by \textcite{greibach1978}.
+In particular, we introduce $\mathfrak{e}$ as an end of input symbol, and allow our automata to add and subtract any constant vector from their counters on a transition instead of only allowing basis vectors.
+It is clear that this does not increase the expressive power of our model.
+Formally, we define a blind $k$-counter automaton as follows.
+
+\begin{definition}\label{defn:blind-k-counter-automata}
+	Let $k \in \mathbb{N}$, then a \emph{blind $k$-counter automaton} is a $6$-tuple of the form $M = (Q,\Sigma,\delta,q_0,F, \mathfrak{e})$ where
+	\begin{enumerate}
+		\item $Q$ is a finite set of \emph{states};
+		\item $\Sigma$ is a finite \emph{input alphabet};
+		\item $\delta$ is a finite subset of
+		\[
+			\big(
+				Q
+				\times
+				(\Sigma \cup \{\varepsilon, \mathfrak{e}\})
+			\big)
+			\times
+			\big(
+				Q
+				\times
+				\mathbb{Z}^k
+			\big),
+		\]
+		where $\varepsilon$ is the empty word, which we call the \emph{transition relation};
+		\item $q_0 \in Q$ is the \emph{initial state};
+		\item $F \subseteq Q$ is the set of \emph{final states}; and
+		\item $\mathfrak{e} \notin \Sigma$ is the \emph{end of tape symbol}.
+	\end{enumerate}
+\end{definition}
+
+Let $M = (Q,\Sigma,\delta,q_0,F, \mathfrak{e})$ be a blind $k$-counter automaton.
+Then $M$ begins in state $q_0$ with zero on all its counters.
+Suppose that there is a transition relation $((q,a),(p,v)) \in \delta$ with $p,q \in Q$, $a \in \Sigma \cup \{\varepsilon,\mathfrak{e}\}$ and $v \in \mathbb{Z}^k$;
+if $M$ is in state $q$ with $a$ as the next letter on its input tape, then it can transition to state $p$ after adding $v$ to its counters and consuming $a$ from its input tape.
+The machine accepts if it is in an accepting state $q \in F$, has no letters remaining on its input tape, and has zero on all its counters.
+
+Formally, we represent the configuration of a blind $k$-counter automaton $M$ as an \emph{instantaneous description} of the form
+\[
+	(
+		q,(c_1,c_2,\ldots,c_k),\sigma\mathfrak{e}
+	)
+	\in Q \times \mathbb{Z}^k \times \Sigma^*\mathfrak{e}
+\]
+where $q \in Q$ is the \emph{current state}, $(c_1,c_2,\ldots,c_k) \in \mathbb{Z}^k$ are the values of the counters, and $\sigma \in \Sigma^*$ is the sequence of letters which have yet to be consumed.
+Let $C_1$ and $C_2$ be instantaneous descriptions for the configuration of $M$.
+Then we write $C_1 \vdash C_2$ if $M$ can move from configuration $C_1$ to $C_2$ in a single transition.
+Formally, we interpret the transition relation $\delta$ as follows.
+
+For each transition relation of the form $((q,s),(p,v)) \in \delta$ with $s \in \Sigma\cup\{\varepsilon\}$, and for each $\sigma = s\sigma' \in \Sigma^*$, we have transitions of the form
+\[
+	(
+		q,(c_1,c_2,\ldots,c_k),\sigma\mathfrak{e}
+	)
+	\vdash
+	(
+		p,(c_1+v_1,c_2+v_2,\ldots,c_k+v_k),\sigma'\mathfrak{e}
+	).
+\]
+Moreover, for each relation $((q,\mathfrak{e}),(p,v)) \in \delta$ we have transitions
+\[
+	(
+		q,(c_1,c_2,\ldots,c_k),\mathfrak{e}
+	)
+	\vdash
+	(
+		p,(c_1+v_1,c_2+v_2,\ldots,c_k+v_k),\mathfrak{e}
+	).
+\]
+Notice that we do not consume the end of tape symbol $\mathfrak{e}$.
+
+We then write $\vdash^*$ for the transitive symmetric closure of $\vdash$, that is, we have $C_1 \vdash^* C_2$ if $M$ can move from configuration $C_1$ to $C_2$ within finitely many transitions.
+We say that a word $\sigma \in \Sigma^*$ is accepted by $M$ if
+\[
+	(q_0,(0,0,\ldots,0),\sigma\mathfrak{e})
+	\vdash^*
+	(q,(0,0,\ldots,0),\mathfrak{e})
+\]
+for some $q \in F$.
+We define the language accepted by a blind multicounter automaton as follows.
+
+\begin{definition}\label{defn:blind-multicounter}
+Let $M$ be a blind multicounter automaton.
+Then
+\[
+	L(M)
+	=
+	\left\{
+		\sigma \in \Sigma^*
+	\mid
+			(q_0,(0,0,\ldots,0),\sigma\mathfrak{e})
+			\vdash^*
+			(q,(0,0,\ldots,0),\mathfrak{e})
+		\text{ where }
+			q \in F
+	\right\}
+\]
+is the \emph{blind multicounter language} accepted by $M$.
+\end{definition}
+
+The family of blind multicounter languages satisfy the language hierarchy in \cref{fig:language-hierarchy}, in particular, we may construct a language for each region of the diagram in \cref{fig:language-hierarchy} as follows.
+We see that the class of finite-state automata is equivalent to the class of blind $0$-counter automata, and that each blind $k$-counter language is also a blind $(k+1)$-counter language.
+We see that blind 1-counter languages form a subfamily of the context-free languages.
+Moreover, from \cite[Theorem~1]{greibach1978} it can be seen that the class of blind multicounter languages is a subclass of context-sensitive languages.
+From \cite{shapiro1994} it is known that $F_2 \times F_2$ has a context-sensitive word problem.
+It is a classic result by \textcite{muller1983} that the word problem for a group is context-free if and only if the group is virtually free.
+Moreover, it was shown in \cite{elder2008} that the word problem for a group is blind $k$-counter if and only if the group is virtually $\mathbb{Z}^m$ for some $m \leqslant k$.
+From these characterisations we see that the word problem for the free group $F_2$ is context-free but not blind multicounter; for each $k \geqslant 2$, the word problem for $\mathbb{Z}^k$ is blind $k$-counter but not context-free; the word problem for $\mathbb{Z}^{k+1}$ is blind $(k+1)$-counter but not blind $k$-counter; and that the word problem for $F_2 \times F_2$ is context-sensitive and neither context-free nor blind multicounter.
+From the proof of Theorem~5 in \cite{greibach1978}, we see that
+\[
+	L_k
+	=
+	\{
+		a_1^{n_1}
+		a_2^{n_2}
+		\cdots
+		a_k^{n_k}
+		b_k^{n_k}
+		\cdots
+		b_2^{n_2}
+		b_1^{n_1}
+	\mid
+		n_1,n_2,\ldots,n_k \in \mathbb{N}
+	\}
+\]
+is context-free and blind $k$-counter, but not blind $(k-1)$-counter.
+
+\section{ET0L Languages}\label{sec:et0l-language}
+
+The family of \emph{Extended Tabled 0-interaction Lindenmayer} (\emph{ET0L}) languages and their deterministic counterpart \emph{EDT0L} were introduced and studied by \textcite{rozenberg1973}.
+The class of ET0L language results from modifying the grammar of a context-free language, in particular, we demand that a replacement is made for each non-terminal letter at the same time in the sense of an \emph{L-system}.
+We provide a formal definition of this family of languages in \cref{def:et0l grammar}.
+
+In recent publications, the family of \emph{ET0L} languages and their deterministic counterpart, \emph{EDT0L}, have found their place as a natural choice for modelling group-theoretic problems.
+In particular, it is known that the solutions to equations over free monoids with involution~\cite{diekert2017}, hyperbolic groups~\cite{ciobanu2019}, virtually abelian groups~\cite{evetts2020}, and right-angled Artin groups~\cite{diekert2001} can be expressed as EDT0L languages, and that these languages are effectively constructable.
+Moreover, it was shown by \textcite{ciobanu2018} that many of the existing problems in group theory that were known to be context-sensitive (or indexed), are in-fact ET0L.
+
+It was shown by \textcite{holt2006} that the co-word problem for \emph{bounded automata groups} is indexed.
+\Textcite{ciobanu2018} strengthened this result for the case of Grigorchuk group, in particular, they provided an explicit ET0L grammar for the co-word problem of Grigorchuk's group.
+%Although it is possible to extend this technique to a larger number of bounded automata, it is not straightforward to generalise this proof.
+In \cref{thm:virtually-abelian-are-blind-counter}, we complete this project by showing that all bounded automata groups have ET0L co-word problems.
+We accomplish this with the use of an equivalent machine model known as a \emph{cspd automaton} (see \cref{sub:cspd-automata}).
+We provide a self-contained proof of this equivalence in \cref{sec:machine equivalence}.
+
+In the definition of formal grammar we gave in \cref{sec:grammars-and-automata}, we were allowed to apply the grammar rules in any order to any part of a word.
+One generalisation of this is \emph{\citeauthor{lindenmayer1968}-systems} as introduced by \textcite{lindenmayer1968} to model the growth of filamentous organisms, e.g., algae.
+In this model, we demand that a grammar rule be applied to each nonterminal in parallel.
+Informally, ET0L languages are \citeauthor{lindenmayer1968}-systems with context-free replacement rules which are collected into \emph{tables}.
+Formally, we define ET0L languages as follows.
+
+A \emph{table}, $\tau$, is a finite set of context-free replacement rules where each non-terminal, $X \in V$, has at least one replacement in $\tau$.
+For example, let $\Sigma = \{a,b\}$ and $V = \{S,A,B\}$, then the following are tables.
+\begin{equation}\label{eq:alternative-tables-example}
+	\alpha \colon
+	\left\{
+	\begin{aligned}
+		S &\to SS \ \vert \ S \ \vert \ AB\\
+		A &\to A\\
+		B &\to B
+	\end{aligned}
+	\right.
+	\qquad
+	\beta \colon
+	\left\{
+	\begin{aligned}
+		S &\to S\\
+		A &\to aA\\
+		B &\to bB
+	\end{aligned}
+	\right.
+	\qquad
+	\gamma \colon
+	\left\{
+	\begin{aligned}
+		S &\to S \\
+		A &\to \varepsilon \\
+		B &\to \varepsilon
+	\end{aligned}
+	\right.
+\end{equation}
+
+We apply a table, $\tau$, to the word  $w \in (\Sigma \cup V)^*$ to obtain a word $w'$, written $w \to^\tau w'$, by performing a replacement in $\tau$ to each non-terminal in $w$.
+If a table includes more than one rule for some non-terminal, we nondeterministically and independently apply a replacement to each occurrence.
+For example, with $w = SSSS$ and $\alpha$ as in (\ref{eq:alternative-tables-example}), we can apply $\alpha$ to $w$ to obtain $w' = SABSSAB$.
+Given a sequence of tables $\tau_1$, $\tau_2$, \dots, $\tau_k$, we will write $w \to^{\tau_1 \tau_2 \cdots \tau_k} w'$ if there is a sequence of words $w = w_1$, $w_2$, \dots, $w_{k+1} = w'$ such that $w_{j} \to^{\tau_j} w_{j+1}$ for each $j$.
+Notice here that the tables are applied from left to right.
+
+\begin{definition}[\textcite{asveld1977}]\label{def:et0l grammar}
+	An \emph{ET0L grammar} is a 5-tuple $G = (\Sigma, V, T, \mathcal{R}, S)$, where
+	\begin{enumerate}
+		\item $\Sigma$ is an alphabet of \emph{terminals};
+		\item $V$ is an alphabet of \emph{non-terminals};
+		\item $T = \{\tau_1, \tau_2 ,\dots, \tau_k\}$ is a finite set of \emph{tables};
+		\item $\mathcal{R} \subseteq T^*$ is a regular language called the \emph{rational control}; and
+		\item $S \in V$ is the \emph{start symbol}.
+	\end{enumerate}
+	The \emph{ET0L language} produced by the grammar $G$, denoted $L(G)$, is 
+	\[
+		L(G)
+		=
+		\left\{
+			w \in \Sigma^*
+		\mid 
+			S \to^{v} w
+			\text{ for some }
+			v \in \mathcal{R}
+		\right\}.
+	\]
+	Moreover, $G$ is an \emph{EDT0L grammar}, and $L(G)$ an \emph{EDT0L language}, if for each table $\tau_i$ has exactly one replacement for each non-terminal letter.
+\end{definition}
+
+For example, let $\alpha$, $\beta$ and $\gamma$ as in (\ref{eq:alternative-tables-example}), then the language produced the grammar with rational control $\mathcal{R} = \alpha^* \beta^* \gamma$ is $\{( a^n b^n )^m \mid n,m \in \mathbb{N} \}$.
+It can then be shown using the \textit{pumping lemma} (see~\cite[Theorem~2.34]{sipser2013}) that this language is not context-free.
+We see that each context-free language is ET0L, in particular, for each context-free grammar $(\Sigma,V,S,P)$ we may construct an ET0L grammar $(\Sigma, V, T, \mathcal{R}, S)$ with $\mathcal{R} = T^*$ where $T$ contains one table
+$
+	\tau
+	=
+	P \cup \{v \mapsto v \mid v \in V\}.
+$
+Thus, the family of ET0L languages contain the context-free languages as a proper sub-family.
+
+\subsection{CSPD Automata}\label{sub:cspd-automata}
+
+An alternative method to show that a language is ET0L is by making use of an equivalent machine model known as a \emph{cspd automaton}.
+In \cref{sec:machine equivalence}, we show that ET0L languages and cspd automata are equivalent in expressive power.
+%In particular, this means that each language recognised by a cspd automaton has an ET0L grammar.
+
+A \emph{cspd automaton}, studied in \cite{leeuwen1976}, is a nondeterministic finite-state automaton with a one-way input tape, and access to both a \emph{check-stack} (with stack alphabet $\Delta$) and a \emph{pushdown stack} (with stack alphabet $\Gamma$), where access to these two stacks is tied in a very particular way.
+The execution of a cspd machine is separated into two stages.
+
+In the first stage the machine is allowed to push letters onto its check-stack but \textit{not} its pushdown, and further, the machine will not be allowed to read from its input tape.
+Thus, the set of all possible check-stacks that can be constructed in this stage forms a regular language which we will denote as $\mathcal{R}$.
+
+In the second stage, the machine can no longer alter its check-stack, but is allowed to access its pushdown and input tape.
+We  restrict the machine's access to its stacks so that it can only move along its check-stack by pushing and popping items to and from its pushdown.
+In particular, every time the machine pushes a value onto the pushdown it will move up the check-stack, and every time it pops a value off of the pushdown it will move down the check-stack.
+See \cref{fig:cspd stage 2} for an example of this behaviour.
+
+\begin{figure}[!ht]
+	\centering
+	
+	\begin{minipage}{0.3\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{figure/stacks1}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.3\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{figure/stacks2}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.3\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{figure/stacks3}
+	\end{minipage}
+	
+	\caption{An example of a cspd machine pushing $w = a_1 a_2$, where $a_1,a_2 \in \Delta$, onto its pushdown stack, then popping $a_1$ (as read from left to right).}%
+	\label{fig:cspd stage 2}
+	
+\end{figure}
+
+We define a cspd machine formally as follows.
+
+\begin{definition}\label{def:cspd machine}
+	A \emph{cspd machine} is a 9-tuple $\mathcal{M} = (Q, \Sigma, \Gamma, \Delta, \mathfrak b, \mathcal{R}, \theta, q_0, F)$, where
+	\begin{enumerate}
+		\item $Q$ is the set of \emph{states};
+		\item $\Sigma$ is the \emph{input alphabet};
+		\item $\Gamma$ is the \emph{alphabet for the pushdown};
+		\item $\Delta$ is the \emph{alphabet for the check-stack};
+		\item $\mathfrak{b} \notin \Delta \cup \Gamma$ is the \emph{bottom of stack symbol};
+		\item $\mathcal{R} \subseteq \Delta^*$ is a \emph{regular language of allowed check-stacks};
+		\item $\theta$ is a finite subset of
+		\[
+			(
+				Q
+				\times
+				( \Sigma \cup \{\varepsilon\} )
+				\times
+				(
+					(\Delta \times \Gamma)
+					\cup
+					\{
+						(\varepsilon,\varepsilon),
+						(\mathfrak{b},\mathfrak{b})
+					\}
+				)
+			)
+			\times
+			( Q \times ( \Gamma \cup \{\mathfrak{b}\})^* ),
+		\]
+		called the \emph{transition relation} (see below for allowable elements of $\theta$);
+		\item $q_0 \in Q$ is the \emph{start state}; and
+		\item $F \subseteq Q$ is the set of \emph{accepting states}.
+	\end{enumerate}
+\end{definition}
+
+In its initial configuration, the machine is in state $q_0$, the check-stack will contain $\mathfrak{b}w$ for some nondeterministic choice of $w \in \mathcal{R}$, the pushdown will contain only the letter $\mathfrak{b}$, the read-head for the input tape will be at its first letter, and the read-head for the machine's stacks will be pointing to the $\mathfrak{b}$ on both stacks.
+From here, the machine will follow transitions as specified by $\theta$.
+Each such transition will have one of the following three forms, where $a\in \Sigma\cup\{\varepsilon\}$, $p,q\in Q$ and $w \in \Gamma^*$.
+
+\begin{enumerate}
+	
+	\item
+	$((p,a,(\mathfrak{b},\mathfrak{b})),(q, w\mathfrak{b})) \in \theta$ meaning that if the machine is in state $p$, sees $\mathfrak{b}$ on both stacks and is able to consume $a$ from its input;
+	then it can follow this transition to  consume $a$, push $w$ onto the pushdown and move to state $q$.
+	
+	\item
+	$((p,a,(d,g)),(q,w)) \in \theta$ where $ (d,g) \in \Delta \times \Gamma$,
+	meaning that if the machine is in state $p$, sees $d$ on its check-stack, $g$ on its pushdown, and is able to consume $a$ from its input;
+	then it can follow this transition to  consume $a$, pop $g$, then push $w$ and move to state $q$.
+	
+	\item
+	$((p,a,(\varepsilon,\varepsilon)),(q,w)) \in \theta$
+	meaning that if the machine is in state $p$ and can consume $a$ from its input;
+	then it can follow this transition to  consume $a$, push $w$ and move to state $q$.
+\end{enumerate}
+
+In the previous three cases, $a = \varepsilon$ corresponds to a transition in which the machine does not consume a letter from input.
+We use the convention that, if $w = w_1 w_2 \cdots w_k$ with each $w_j \in \Gamma$, then the machine will push $w_k$ first, followed by the $w_{k-1}$ and so forth. 
+The machine accepts if it has consumed all its input and is in an accepting state $q \in F$.
+
+In \cite{leeuwen1976}~\citeauthor{leeuwen1976} proved that the family of languages recognised by cspd automata is precisely the class of ET0L languages. 
+For completeness, in the following subsection we provide a self-contained proof of this equivalence.
+
+\subsection{Equivalence of CSPD and ET0L}\label{sec:machine equivalence}
+
+We now provide our own self-contained proof of the equivalence between the family of ET0L languages and the class of languages recognised by cspd automata.
+We begin by introducing some additional notation and a normal form for cspd automata,
+then we prove our result in \cref{prop:et0l-to-cspd,prop:cspd-to-et0l}.
+
+\subsubsection{Additional Notation}\label{sec:cspd-additional-notation}
+
+We define a non-terminal $\mathfrak{d}$ which we call a \emph{dead-end symbol}.
+If an ET0L grammar has the dead-end symbol, then we demand that $\mathfrak{d}$ is not a terminal and that each table can only map $\mathfrak{d}$ to itself, i.e., $\mathfrak{d} \to \mathfrak{d}$.
+Thus, if a table induces a letter $\mathfrak{d}$, then there is no way to remove it to generate a word in the associated language.
+
+For simplicity when presenting tables, if a replacement is not specified for a particular variable $X$, then it should be assumed that the replacement rule $X \to X$ is in the table.
+
+We introduce the following generalisation of ET0L grammars.
+We use this generalisation to construct an ET0L grammar from a cspd automaton in \cref{prop:cspd-to-et0l}.
+
+\begin{lemma}[\textcite{christensen1974}]\label{lemma:et0l-regular-replacements}
+	The class of ET0L grammars does not gain any expressive power if each replacement rule has the form
+	$
+		\tau : X \to L_{X,\tau}
+	$
+	where each $L_{X,\tau}$ is an ET0L language, that is, if we allow $\tau$ to replace instances of the variable $X$ with nondeterministic choices of words from $L_{X,\tau}$.
+\end{lemma}
+
+\begin{proof}
+	
+	Let $G = (\Sigma, V, T, \mathcal{R}, S)$ be a grammar in this extended form, that is, where each replacement rule maps $X$ into any word in some ET0L language $L_{X,\tau}$. 
+	Assume without loss of generality that every terminal is also a non-terminal, i.e., $\Sigma \subseteq V$
+	(this is done by  first adding replacement rules $\tau \colon a \to a$ for each table $\tau \in T$ and each $a \in \Sigma \setminus V$; then we add the letters of $\Sigma$ to $V$.
+	It is clear that this modified grammar generates the same language).
+	
+	
+	For each language $L_{X,\tau}$ in the grammar $G$, let
+	\[
+	G_{X,\tau}
+	=
+	(
+	\Sigma_{X,\tau},
+	V_{X,\tau},
+	T_{X,\tau},
+	\mathcal{R}_{X,\tau},
+	S_{X,\tau}
+	)
+	\]
+	be an ET0L grammar such that $L_{X,\tau} = L(G_{X,\tau})$.
+	Notice here that $\Sigma_{X,\tau}$ must be a subset of $V$ such that the language $L_{X,\tau}$ generates words in $V^*$.
+	
+	For each $X \in V$, we define two disjoint copies denoted as $X^{(1)}$ and $X^{(2)}$;
+	and we demand that these copies are disjoint to letters in the alphabets $V_{Y,\tau}$ and $\Sigma_{Y,\tau}$ for each $Y\in V$ and $\tau \in T$.
+	
+	We define two ET0L tables $\alpha$ and $\kappa$ such that, for each $X \in V$, we have replacement rules $\alpha \colon X \to X^{(1)}$ and $\kappa\colon X^{(1)} \to \mathfrak{d}$.
+	
+	For each table $\tau \in T$ and non-terminal $X \in V$, we define ET0L tables
+	\[
+	\beta_{X}^\tau\colon X^{(1)} \to X^{(1)}\ \vert \ S_{X,\tau}
+	\ \ \ 
+	\text{and}
+	\ \ \ 
+	\gamma_{X}^\tau\colon
+	\left\{
+	\begin{aligned}
+		Y &\to Y^{(2)}     && \text{for }Y \in \Sigma_{X,\tau}\subseteq V,\\
+		Z &\to \mathfrak{d}&& \text{for }Z \in V_{X,\tau} \setminus \Sigma_{X,\tau}.
+	\end{aligned}
+	\right.
+	\]
+	
+	Given a $\tau \in T$, it can be seen that $\tau$ is equivalent to the regular expression
+	\[
+	\tau'
+	=
+	\alpha
+	\left( \beta_{X_1}^\tau \mathcal{R}_{X_1,\tau} \gamma_{X_1}^\tau\right)^*
+	\left( \beta_{X_2}^\tau \mathcal{R}_{X_2,\tau} \gamma_{X_2}^\tau\right)^*
+	\cdots
+	\left( \beta_{X_k}^\tau \mathcal{R}_{X_k,\tau} \gamma_{X_k}^\tau\right)^*
+	\kappa
+	\]
+	where $\{X_1,X_2,\ldots,X_k\}=V$.
+	%
+	Thus, after replacing each $\tau$ in a regular expression for $\mathcal{R}$ with its corresponding expression $\tau'$, we obtain a regular language which we denote $\mathcal{R}'$.
+	Thus, it can be seen that the grammar $G$ is equivalent to an ET0L grammar with rational control given by $\mathcal{R}'$.
+\end{proof}
+
+In the proof of \cref{prop:cspd-to-et0l}, we begin by normalising a given cspd automaton as follows.
+
+\begin{lemma}\label{lemma:cspd-model-restrictions}
+	Given a cspd automaton, $\mathcal{M} = (Q, \Sigma, \Gamma, \Delta, \mathfrak{b}, \mathcal{R}, \theta, q_0, F)$, we may assume without loss of generality that:
+	\begin{enumerate}
+		\item the pushdown is never higher than the check-stack;
+		\item there is only one accepting state, i.e., $\{q_\mathrm{accept}\} = F$;
+		\item the pushdown is empty when $\mathcal{M}$ enters the accepting state $q_\mathrm{accept}$;
+		\item transitions to the accepting state $q_\mathrm{accept}$ do not modify the pushdown;
+		\item each transition to states other than $q_\mathrm{accept}$ either pushes exactly one letter to the pushdown or pops exactly one letter from the pushdown.
+	\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+	
+	Let  $\mathcal{M} = (Q, \Sigma, \Gamma, \Delta, \mathfrak{b}, \mathcal{R}, \theta, q_0, F)$ be a cspd machine.
+	
+	For assumption~1,
+	let $N \in \mathbb{N}$ be an upper bound on the number of letters any transition of $\mathcal{M}$ can push.
+	That is, $N$ is such that, given any transition
+	$
+	(
+	(q,a,(d,g)),
+	(p,b_1 b_2 \cdots b_k)
+	)
+	\in \theta
+	$
+	where each $b_j \in \Gamma$, it is the case that $k \leq N$.
+	We now add a disjoint letter $\mathfrak{t}$ to the check-stack alphabet $\Delta$. 
+	Thus, $\mathcal{M}$ has no available transitions when it sees $\mathfrak{t}$ on its check-stack.
+	We thus satisfy assumption~1
+	after replacing the regular language of check-stacks with $\mathcal{R}\mathfrak{t}^N$ (where $\mathfrak{t}^N$ is a sequence of $N$ letters $\mathfrak{t}$'s).
+	
+	For assumptions~2--4
+	we introduce states $q_\mathrm{finish}$ and $q_\mathrm{accept}$ disjoint from all other states in $Q$.
+	For each $(d,g) \in \Delta \times \Gamma$ and each $q \in F$ we add
+	\[
+	(
+	(q,\varepsilon,(d,g)),
+	(q_\mathrm{finish},\varepsilon)
+	),
+	\ 
+	(
+	(q_\mathrm{finish},\varepsilon, (d,g)),
+	(q_\mathrm{finish},\varepsilon)
+	)
+	\]
+	so that we can empty the pushdown after reaching an accepting state $q\in F$.
+	Further, for each state $q \in F$, we add transitions
+	\[
+	(
+	(q,\varepsilon,(\mathfrak{b},\mathfrak{b})),
+	(q_\mathrm{accept},\mathfrak{b})
+	),
+	\ 
+	(
+	(q_\mathrm{finish},\varepsilon, (\mathfrak{b},\mathfrak{b})),
+	(q_\mathrm{accept},\mathfrak{b})
+	)
+	\]
+	so that we can move to state $q_\mathrm{accept}$ once the pushdown has been emptied.
+	
+	Thus, we now replace the set of accepting states, $F$, with $\{q_\mathrm{accept}\}$ to obtain an equivalent machine that satisfies assumptions~2--4.
+	
+	For assumption~5, 
+	we only need to consider transitions of the form
+	\begin{equation}\label{eq:form1}
+		(
+		(p,\alpha,(d,g)),
+		(q,a_1 a_2 \cdots a_k)
+		)
+	\end{equation}
+	where $p,q \in Q$ with $q \neq q_\mathrm{accept}$, $(d,g) \in \Delta\times\Gamma\cup\{(\mathfrak{b},\mathfrak{b})\}$, $\alpha \in \Sigma^*$, and each $a_j \in \Gamma\cup \{\mathfrak{b}\}$ with either $a_k \neq g$ or $k > 2$.
+	
+	Given a transition as in (\ref{eq:form1}), we add states $p_{a_1}^q$, $p_{a_1 a_2}^q$, \dots, $p_{a_1 a_2 \cdots a_k}^q$; and
+	for each $(b,c) \in \Delta\times\Gamma\cup\{(\mathfrak{b},\mathfrak{b})\}$ and $j\in \mathbb{N}$ with $1 < j \leq k$, we add transitions
+	\[
+	(
+	(p^q_{a_1 a_2 \cdots a_j},\varepsilon,(b,c)),
+	(p^q_{a_1 a_2 \cdots a_{j-1}},a_{j}c)
+	),
+	\ 
+	(
+	(p^q_{a_1},\varepsilon,(b,c)),
+	(q,a_{1}c)
+	),
+	\]
+	so that, from state $p^q_{a_1 a_2 \cdots q_j}$, we go through a sequence of transitions which push the word $a_1 a_2 \cdots a_j$ and end in the state $q$.
+	Moreover, if $a_k \neq g$ in our given transition, then we add a transition
+	\[
+	(
+	(p,\alpha, (d,g)),
+	(p^q_{a_1a_2\cdots a_k}, \varepsilon)
+	),
+	\]
+	otherwise we add a transition
+	\[
+	(
+	(p,\alpha, (d,g)),
+	(p^q_{a_1a_2\cdots a_{k-2}}, a_{k-1} g)
+	).
+	\]
+	
+	Notice that with the addition of these states and transitions, we can remove all transitions as in (\ref{eq:form1}) and still recognise the same language.
+	
+	This completes the proof.
+\end{proof}
+
+\subsubsection{Proof of Equivalence}\label{sec:proof-of-et0l-cspd-equivalence}
+
+In this section we prove the following equivalence.
+
+\begin{proposition}[\textcite{leeuwen1976}]\label{thm:et0l-cspd-equivalence}
+	The class of ET0L languages is equivalent to the class of languages recognised by cspd automata.
+\end{proposition}
+
+We now provide our own self-contained proof of the equivalence given in \cref{thm:et0l-cspd-equivalence}.
+The proof is divided into \cref{prop:cspd-to-et0l,prop:et0l-to-cspd}.
+We begin as follows by showing that ET0L languages form a subfamily of languages recognised by cspd automata.
+
+\begin{lemma}\label{prop:et0l-to-cspd}
+	For each ET0L language there is an equivalent cspd automaton.
+\end{lemma}
+
+\begin{proof}
+	
+	Let $L$ be a given ET0L language with grammar $G = (\Sigma, V, T, \mathcal{R}, S)$, i.e., $L = L(G)$.
+	Thus, in this proof we construct a cspd machine $\mathcal{M}$ which accepts precisely the language $L$ by emulating derivations of words with respect to $G$.
+	
+	Let $w \in L$.
+	Then, by the definition of an ET0L grammar, there exists a sequence of tables $\alpha = \alpha_1 \alpha_2 \cdots a_k \in \mathcal{R}$ for which $S \to^\alpha w$.
+	Thus, the idea of this construction is that $\mathcal{M}$ accepts the word $w$ by choosing its check-stack to represent such a sequence $\alpha$, then $\mathcal{M}$ emulates a derivation of $w$ from $S$ with the use of its pushdown and reference to the check-stack.
+	
+	We now give a description of this construction.
+	We begin by choosing the alphabets and states for $\mathcal{M}$ as follows.
+	
+	The input alphabet of $\mathcal{M}$ is given by $\Sigma$.
+	The alphabet of the check-stack is given by $\Delta = T \cup \{\mathfrak{t}\}$ where $\mathfrak{t}$ is used to denote the top of the check-stack.
+	Further, the regular language of allowed check-stacks is given by $\mathcal{R}\mathfrak{t}$ where $\mathcal{R}$ is the rational control of the grammar $G$.
+	
+	The alphabet for the pushdown, $\Gamma$, will include letters $\llbracket S \rrbracket$ and $\llbracket \varepsilon \rrbracket$ to denote the starting symbol and empty word, respectively; and for each table $\tau \in T$ and each replacement rule $\tau\colon A \to B_1 B_2 \cdots B_\ell$ with each $B_j \in V \cup \Sigma$, and for each $k \in \mathbb{N}$ with $1 \leq k \leq \ell$, we have $\llbracket B_k B_{k+1} \cdots B_\ell \rrbracket$ as a distinct symbol of $\Gamma$.
+	For example, if $T = \{\alpha, \beta, \gamma\}$ where
+	\[
+	\alpha \colon
+	S \to ABC \ \vert \ BCB
+	\qquad
+	\beta \colon
+	\left\{
+	\begin{aligned}
+		A &\to BA \ \vert \ B \\
+		B &\to B\ \vert\ \varepsilon \\
+		C &\to B
+	\end{aligned}
+	\right.
+	\qquad
+	\gamma \colon
+	\left\{
+	\begin{aligned}
+		A &\to a \\
+		B &\to bb\\
+		C &\to c
+	\end{aligned}
+	\right.,
+	\]
+	then the corresponding pushdown alphabet is given by
+	\begin{multline*}
+		\Gamma
+		=
+		\{ \llbracket S \rrbracket, \llbracket \varepsilon \rrbracket \}
+		\cup
+		\underbrace{
+			\left\{
+			\llbracket ABC \rrbracket,
+			\llbracket BC \rrbracket,
+			\llbracket C \rrbracket,
+			\llbracket BCB \rrbracket,
+			\llbracket CB \rrbracket,
+			\llbracket B \rrbracket
+			\right\}
+		}_{\text{suffixes of rules in }\alpha}
+		\\
+		\cup
+		\underbrace{
+			\left\{
+			\llbracket BA \rrbracket,
+			\llbracket A \rrbracket,
+			\llbracket B \rrbracket
+			\right\}
+		}_{\text{suffixes of rules in }\beta}
+		\cup
+		\underbrace{
+			\left\{
+			\llbracket a \rrbracket,
+			\llbracket bb \rrbracket,
+			\llbracket b \rrbracket,
+			\llbracket c \rrbracket
+			\right\}
+		}_{\text{suffixes of rules in }\gamma}.
+	\end{multline*}
+	Notice that the pushdown alphabet $\Gamma$ is finite as an ET0L grammar can have only finitely many replacement rules.
+	
+	The machine $\mathcal{M}$ has three states $\{ q_0, q_\mathrm{apply}, q_\mathrm{accept}\} = Q$ where $q_0$ is the start state and $q_\mathrm{accept}$ is the only accepting state.
+	The idea of state $q_\mathrm{apply}$ is that its transitions to itself emulate an application of a table, which it sees on the check-stack, to a non-terminal, which it sees on the pushdown.
+	
+	Now that we have chosen our alphabets and states, we are ready to describe the transition relations, $\theta$, of $\mathcal{M}$.
+	
+	To begin a computation we have the transition
+	\[
+	(
+	(q_0,\varepsilon,(\mathfrak{b},\mathfrak{b})),
+	(q_\mathrm{apply}, \llbracket S \rrbracket \mathfrak{b})
+	)
+	\]
+	which pushes the start symbol of the grammar onto the pushdown (see \cref{fig:machine beginning}).
+	In the remainder of this proof, we will ensure that $\mathcal{M}$ is only able to empty its pushdown by emulating a derivation of its input word with respect to the grammar $G$.
+	Thus, we have the transition
+	\[
+	(
+	(q_\mathrm{apply},\varepsilon,(\mathfrak{b},\mathfrak{b})),
+	(q_\mathrm{accept},\mathfrak{b})
+	),
+	\]
+	to accept when the pushdown is emptied.
+	
+	\begin{figure}[!ht]
+		\centering
+		\includegraphics[width=.3\linewidth]{figure/pushStartSymbol}
+		\caption{The stack configuration when the machine first enters state $q_\mathrm{apply}$.}%
+		\label{fig:machine beginning}
+	\end{figure}
+	
+	We will now describe how the transitions from $q_\mathrm{apply}$ performs a derivation in the grammar $G$.
+	
+	Suppose that $\mathcal{M}$ is in state $q_\mathrm{apply}$, then the remaining transitions can be separated into the following three cases.
+	
+	\begin{enumerate}
+		\item \textit{Applying a table.}
+		Suppose that the read-head of $\mathcal{M}$ sees
+		$(\tau, \llbracket A_1 A_2 \cdots A_m \rrbracket)$
+		where $\tau$ is a table of the grammar and $m \geq 1$.
+		Then, we want $\mathcal{M}$ to apply the table $\tau$ to the word $A_1 A_2 \cdots A_m$.
+		We do this by applying $\tau$ from left-to-right, i.e., for each $B_1 B_2 \cdots B_k \in (V \cup \Sigma)^*$ such that $A_1 \to^\tau B_1 B_2 \cdots B_k$ we have transitions
+		\[
+		(
+		(q_\mathrm{apply}, \varepsilon, (\tau, \llbracket A_1 A_2 \cdots A_m \rrbracket)),
+		(q_\mathrm{apply},
+		\llbracket B_1 B_2 \cdots B_k \rrbracket
+		\llbracket A_2 \cdots A_m \rrbracket
+		)
+		)
+		\]
+		to expand the letter $A_1$ to a nondeterministic choice of sequence $B_1 B_2 \cdots B_k$.
+		See \cref{fig:cspd expanding letter} for an example of this expansion.
+		
+		\item \textit{Empty word.}
+		Suppose that the read-head of $\mathcal{M}$ sees
+		$(\tau, \llbracket \varepsilon \rrbracket)$
+		where $\tau$ is a table.
+		Then, since there is no way to expand $\varepsilon$ any further, we pop this letter from the pushdown, i.e., for each table $\tau \in T$ we have a transition
+		\[
+		(
+		(q_\mathrm{apply}, \varepsilon, (\tau, \llbracket \varepsilon \rrbracket)),
+		(q_\mathrm{apply}, \varepsilon)
+		).
+		\]
+		
+		\item \textit{Finished applying tables.}
+		Suppose that $\mathcal{M}$ is at the top of its check-stack, i.e., its read-head sees $(\mathfrak{t}, \llbracket A_1 A_2 \cdots A_m \rrbracket)$ where $m=0$ corresponds to the read-head seeing $(\mathfrak{t},\llbracket \varepsilon \rrbracket)$.
+		Then, we have no further tables to apply to $A_1 A_2 \cdots A_m$.
+		Thus, each $A_j$ must be a terminal letter of $\Sigma$, and we must see $A_1 A_2 \cdots A_m$ on the input tape.
+		Thus, for each $\llbracket a_1 a_2 \cdots a_m \rrbracket \in \Gamma$ with each $a_j \in \Sigma$, we have a transition
+		\[
+		(
+		(q_\mathrm{apply}, a_1 a_2 \cdots a_m, (\mathfrak{t}, \llbracket a_1 a_2 \cdots a_m \rrbracket)),
+		(q_\mathrm{apply}, \varepsilon)
+		).
+		\]
+		Notice here that, if the letter on the pushdown does not correspond to a word in $\Sigma^*$, then we have no path to $q_\mathrm{accept}$ and thus we reject.
+		
+	\end{enumerate}
+	
+	\begin{figure}[!ht]
+		\centering
+		\includegraphics[width=.4\linewidth]{figure/state2a}
+		\hspace*{.05\linewidth}
+		\includegraphics[width=.4\linewidth]{figure/state2b}
+		\caption{Expanding the letter $A_1$ with respect to the table $\tau$.}%
+		\label{fig:cspd expanding letter}
+	\end{figure}
+	
+	\proofsection{Soundness and Completeness}
+	
+	Suppose that $\mathcal{M}$ is given a word $w \in L$ on its input tape.
+	Then, there must exist some $\alpha \in \mathcal{R}$ such that $S \to^\alpha w$ in the grammar $G$.
+	Thus, $\mathcal{M}$ can nondeterministically choose a check-stack of $\alpha\mathfrak{t}$ and emulate a derivation of $w$ from $S$ as previously described.
+	Hence, $\mathcal{M}$ will accept any word from $L$.
+	
+	Suppose that $\mathcal{M}$ accepts a given word $w \in L$ with a check-stack of $\alpha\mathfrak{t}$.
+	Then, by following the previous construction, it can be seen that we can recover a derivation $S \to^\alpha w$.
+	Hence, $\mathcal{M}$ can only accept words in $L$.
+	
+	Therefore, $\mathcal{M}$ accepts a given word if and only if it is in the language $L$.
+\end{proof}
+
+We now complete our proof of \cref{thm:et0l-cspd-equivalence} by showing that the family of languages recognised by cspd automata forms a subclass of ET0L as follows.
+
+\begin{lemma}\label{prop:cspd-to-et0l}
+	A language recognised by a cspd automaton is ET0L.
+\end{lemma}
+
+\begin{proof}
+	Let $\mathcal{M} = (Q, \Sigma, \Gamma, \Delta, \mathfrak{b}, \mathcal{R}, \theta, q_0, F)$ be a given cspd automaton, where we will assume without loss of generality that $\mathcal{M}$ satisfies \cref{lemma:cspd-model-restrictions}.
+	
+	We will construct a grammar $G = (\Sigma,V,T,\mathcal{R}',S)$ as in \cref{lemma:et0l-regular-replacements}, which generates precisely the language recognised by $\mathcal{M}$.
+	
+	Considering assumptions~2--4 from \cref{lemma:cspd-model-restrictions}, a plot of the height of the pushdown during a successful computation of $\mathcal{M}$ (i.e.\@ one that leads to the accepting state) will resemble a Dyck path; that is, the non-negative height of the pushdown is zero at the beginning and end of such a computation.
+	
+	For each pair of states $p,q \in Q$ and each pushdown letter $g \in \Gamma$, the grammar $G$ has a non-terminal letter $A^g_{p,q}$.
+	The non-terminal $A^g_{p,q}$ corresponds to the situation where $\mathcal{M}$ has just pushed $g$ onto its pushdown on a transition to the state $p$; and that when $\mathcal{M}$ pops this $g$, it will do so on a transition to the state $q$.
+	Further, $G$ has a non-terminal $A^\mathfrak{b}_{q_0,q_\mathrm{accept}}$ which corresponds to any path from the initial configuration to the accepting state.
+	(See \cref{fig:cspd dyck path}.)
+	Thus, the starting symbol of $G$ will be given by $S = A^\mathfrak{b}_{q_0,q_\mathrm{accept}}$.
+	
+	For each letter $c \in \Delta \cup \{\mathfrak{b}\}$ on the check-stack, we have a table $\tau_c \in T$ in the grammar $G$.
+	Moreover, by taking a regular expression for the language $\mathfrak{b}\mathcal{R}$ and replacing each instance of $c \in \Delta \cup \{\mathfrak{b}\}$ with its corresponding table $\tau_c$, we obtain the rational control $\mathcal{R}'$ of the grammar $G$.
+	
+	Thus, in the remainder of this proof we describe the tables $\tau_c$, and the way in which they emulate a computation of $\mathcal{M}$.
+	Note that when describing these tables we make use of the notation introduced in \cref{lemma:et0l-regular-replacements};
+	in particular, we will use replacements with regular languages on their right-hand sides.
+	
+	\begin{figure}[!ht]
+		\centering
+		\includegraphics{figure/dyck}
+		\caption{The height of the pushdown during an example computation.}%
+		\label{fig:cspd dyck path}
+	\end{figure}
+	
+	
+	For each $p,q \in Q$ and $(c,b) \in (\Delta\times \Gamma)\cup\{(\mathfrak{b},\mathfrak{b})\}$, let $\mathcal{F}_{p,q}^{(c,b)}$ be a finite-state automaton.
+	The idea here is that, with $\mathcal{L}_{p,q}^{(c,b)}$ as the regular language accepted by $\mathcal{F}_{p,q}^{(c,b)}$, we will have the replacement rule $\tau_c \colon A_{p,q}^{b} \to \mathcal{L}_{p,q}^{(c,b)}$.
+	
+	The states of each $\mathcal{F}_{p,q}^{(c,b)}$ include all the states of $\mathcal{M}$, and an additional disjoint state $\lambda$.
+	We denote these states as $Q' = Q \cup \{\lambda\}$ where $Q$ are states of $\mathcal{M}$.
+	The state $\lambda$ is the only accepting state in each $\mathcal{F}_{p,q}^{(c,b)}$.
+	
+	Let some $\mathcal{F}_{p,q}^{(c,b)}$ be given.
+	Then, a given state $r \in Q \subseteq Q'$ of $\mathcal{F}_{p,q}^{(c,b)}$ corresponds to the situation where $\mathcal{M}$ is in state $r$ and its read-head sees $(c,b)$.
+	Thus, the start state of $\mathcal{F}_{p,q}^{(c,b)}$ is given by $p\in Q'$.
+	Further, the accepting state $\lambda$ corresponds to the configuration of $\mathcal{M}$ immediately after following a path described by $A_{p,q}^b$.
+	
+	With a finite-state automaton $\mathcal{F}_{p,q}^{(c,b)}$ given, we now describe its transitions.
+	Suppose that $\mathcal{M}$ is in the state $r \in Q$ and its read-head sees $(c,b)$,
+	then $\mathcal{M}$ can either push some letter $x \in \Delta$ with a transition of the form
+	\begin{equation}\label{eq:transition 1}
+		(
+		(r, \alpha_1 \alpha_2 \cdots \alpha_k, (c,b)),
+		(s,xb)
+		)
+	\end{equation}
+	then follow a path described by $A_{s,t}^{x}$ for some state $t\in Q$;
+	or $\mathcal{M}$ can complete a path described by $A_{r,q}^b$ with a transition of the form
+	\begin{equation}\label{eq:transition 2}
+		(
+		(r, \alpha_1 \alpha_2 \cdots \alpha_k, (c,b)),
+		(q,\varepsilon)
+		)
+		\quad
+		\text{or}
+		\quad
+		(
+		(r, \alpha_1 \alpha_2 \cdots \alpha_k, (\mathfrak{b},\mathfrak{b})),
+		(q, \mathfrak{b})
+		)
+	\end{equation}
+	depending on whether $q$ is the accepting state $q_\mathrm{accept}$ (see \cref{lemma:cspd-model-restrictions}).
+	
+	Thus, for each transition in $\mathcal{M}$ of form (\ref{eq:transition 1}), and each state $t\in Q \subseteq Q'$, we have a transition in $\mathcal{F}_{p,q}^{(c,b)}$ from state $r$ to $t$ labelled $\alpha_1 \alpha_2 \cdots \alpha_k A_{s,t}^{x}$.
+	
+	Further, for each transition of form (\ref{eq:transition 2}), we have a transition in $\mathcal{F}_{p,q}^{(c,b)}$ from state $r$ to $\lambda$ labelled $\alpha_1 \alpha_2 \cdots \alpha_k$.
+	
+	For each check-stack letter $c \in \Delta \cup\{\mathfrak{b}\}$ of $\mathcal{M}$ and non-terminal $A_{p,q}^b$ of $G$, we define the tables $\tau_c$ such that $\tau_c \colon A_{p,q}^{b} \to \mathcal{L}_{p,q}^{(c,b)}$ where $\mathcal{L}_{p,q}^{(c,b)}$ is the regular language recognised by $\mathcal{F}_{p,q}^{(c,b)}$.
+	Since regular language is a subset of ET0L, then, by \cref{lemma:et0l-regular-replacements}, the grammar $G$ produces an ET0L language as required.
+	
+	\proofsection{Soundness and Completeness}
+	
+	Suppose that $\mathcal{M}$ is able to accept the word $w \in \Sigma^*$ with $\alpha \in \mathcal{R}$ chosen as its check-stack.
+	Then, by following such a computation to the accepting state, we can construct a derivation $S \to^{\mathfrak{b}\alpha} w$ in the grammar $G$.
+	Thus, every word that is accepted by $\mathcal{M}$ is in the language produce by $G$.
+	
+	Let $w\in L(G)$ be a word produced by the grammar $G$.
+	Then, there must exist some sequence of tables $\beta \in \mathcal{R}'$ such that $S \to^{\beta} w$; and thus, for any corresponding derivation in the grammar $G$, and by following our construction, we can recover a computation of $\mathcal{M}$ which accepts $w$.
+	
+	Therefore, $G$ generates precisely the language that is recognised by $\mathcal{M}$.
+\end{proof}
+
+\section{Concluding Remarks}\label{sec:formal-lang/concluding}
+
+In this chapter we defined and motivated several families of formal languages and classes of power series.
+In \cref{chp:coword-problems} we make use of the theory of ET0L grammars, and their equivalence to cspd automata to prove \cref{thm:virtually-abelian-are-blind-counter}.
+In \cref{chp:polyhedral}, we return to formal language theory and define the family of \emph{polyhedrally constrained languages}.
+We then use this family of languages in the proof of \cref{thm:geodesic-growth} in which we show that every virtually abelian group has a holonomic generating function.

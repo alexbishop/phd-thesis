@@ -1,0 +1,291 @@
+\chapter{Introduction}\label{chapter:introduction}
+
+Two of the most important results in geometric group theory are Gromov's classification of groups with \emph{polynomial volume growth}~\cite{gromov1981}, and Grigorchuk's construction of a group with \emph{intermediate volume growth}~\cite{grigorchuk1983}.
+These results answer two questions originally posed by \citeauthor{milnor1968a}, namely, whether the \emph{volume growth} of groups must always be either exponential, or polynomial of an integer degree; and if there is an algebraic classification of groups with polynomial volume growth~\cite{milnor1968a}.
+In this thesis, we consider the analogous questions for \emph{geodesic growth}.
+
+The \emph{volume growth function} of a group counts the number of elements that can be represented using words up to a given length.
+It was shown by \citeauthor{gromov1981} that a group has polynomial volume growth if and only if it is \emph{virtually nilpotent}~\cite{gromov1981}.
+The \emph{geodesic growth function} of a group counts the number of \emph{geodesic words} (i.e.\ minimal-length representatives of group elements) with a given upper bound on their lengths.
+The \emph{volume (resp.~geodesic) growth series} is then the power series whose coefficients are the values of the volume (resp.~geodesic) growth function.
+Since each element of a group has at least one corresponding geodesic, we see that the geodesic growth is bounded from below by the volume growth.
+From this and Gromov's theorem, we see that only \emph{virtually nilpotent} groups may have polynomial geodesic growth.
+It is well known that the class of \emph{nilpotent} groups come in a sequence of \textit{steps}, the first \textit{step} being the abelian groups.
+Thus, to obtain a classification of polynomial geodesic growth, it is natural to start with the \emph{virtually abelian} groups.
+
+The study of geodesic growth for abelian groups began in \citeyear{shapiro1997} when \citeauthor{shapiro1997} considered the function $p_S\colon G \to \mathbb{N}$ which counts the geodesics corresponding to a given element of a group $G$~\cite{shapiro1997}.
+The function $p_S$ is referred to as the \emph{Pascal function} as, in the case of free-abelian groups, it resembles a Pascal triangle.
+The geodesic growth of virtually abelian groups was considered by \citeauthor{bridson2012} who provided the first example of a group with polynomial geodesic growth that is not \emph{virtually cyclic}~\cite{bridson2012}.
+Moreover, they provided a sufficient condition for a virtually abelian group to have polynomial geodesic growth with respect to some generating set, a condition for a group to have exponential geodesic growth with respect to every generating set, and proved that the geodesic growth function of a virtually cyclic group is either exponential, or polynomial of an integer degree.
+In this thesis, we extend their results by completely characterising the geodesic growth for virtually abelian groups.
+
+\begin{restatable*}{theoremx}{TheoremGeodesicGrowth}\label{thm:geodesic-growth}
+	Let $G$ be a virtually abelian group with a finite weighted monoid generating set $S$.
+	Then the geodesic growth with respect to $S$ is either polynomial of integer degree with rational geodesic growth series, or exponential with holonomic geodesic growth series.
+\end{restatable*}
+
+We provide the first example of a group with polynomial geodesic growth that is not virtually abelian.
+In particular, we show that the \emph{virtually Heisenberg group}
+\[
+	\vH
+	=
+	\left\langle
+		a,b,c,t
+	\,\,\middle|\,\,
+		[a,b] = c,\,
+		[a,c] = [b,c] = t^2 = 1,\,
+		a^t = b
+	\right\rangle
+\]
+has a polynomial upper bound on its geodesic growth function with respect to the generating set $S = \{a,a^{-1},t\}$.
+We prove this result in \cref{thm:main}.
+This example shows that a classification of polynomial geodesic growth is more complicated than just a subclass of virtually abelian groups.
+
+\begin{restatable*}{theoremx}{TheoremVirtuallyHeisenberg}\label{thm:main}
+	The geodesic growth function of $\vH$ with respect to $S = \{a,a^{-1},t\}$ is bounded from above by a polynomial of degree $8$.
+\end{restatable*}
+
+It was shown by \citeauthor{duchin2019} that the volume growth series of the Heisenberg group $H_3$ is rational with respect to every generating set~\cite{duchin2019}.
+\Cref{thm:geodesic-growth} shows us that if the geodesic growth of a virtually abelian group is polynomial, then its geodesic growth series is rational.
+However, it is not clear if this holds for the geodesic growth function of our virtually Heisenberg example $H_3 \rtimes C_2$.
+In fact, computational experiments suggest that the geodesic growth series is not rational (see~\cite{githubcode}).
+Thus, this may be the first example with polynomial geodesic growth and non-rational geodesic growth series.
+
+The question of the existence of a group with intermediate geodesic growth was considered as early as 1993 by Grigorchuk and Shapiro (see~\cite[756]{grigorchuk2014}).
+In the PhD thesis of \citeauthor{broennimann2016} %Theorem~3.5,3.8,3.10 and 3.14
+most of the groups known to have intermediate volume growth, at the time, were shown to have exponential geodesic growth with respect to their standard generating sets~\cite[Chapter~3]{broennimann2016};
+these results were an extension of an unpublished work of \citeauthor{elder2006} where this was shown only for the \emph{first Grigorchuk group}~\cite{elder2006}.
+We cannot, at this time, eliminate the possibility of there being a virtually nilpotent group with intermediate geodesic growth.
+Thus, the results in this thesis also have application to the search of a group with intermediate geodesic growth.
+
+Most of the literature on geodesic growth has been concerned with either showing that the language of geodesics is regular (see~\cref{sec:grammars-and-automata}), or that the geodesic growth series is rational (see~\cref{sec:formal-language/generating-functions/rational}) with respect to some particular generating sets.
+It is known that the language of geodesics for a \emph{hyperbolic group} is regular with respect to any finite generating set~\cite[Theorem~3.4.5]{epstein1992}.
+This result was generalised by \citeauthor{neumann1995} to any group and generating set with the \emph{falsification by fellow traveller property}~\cite[Proposition~4.2~on~p.~267]{neumann1995}.
+There are many results for particular generating sets of certain \emph{Coxeter groups}, \emph{Artin groups} \cite{antolin2021,mairesse2006,kolpakov2020,ciobanu2016,antolin2013,holt2012,antolin2021,athreya2014}, and \emph{Garside groups}~\cite{sabalka2004,charney2004}.
+\Citeauthor{shapiro1997} studied the Pascal function for abelian and hyperbolic groups~\cite{shapiro1997}.
+It was shown by \citeauthor{loeffler2002} that having a regular language of geodesics is preserved by graph product~\cite{loeffler2002}.
+\Citeauthor{hermiller2008} studied groups whose languages of geodesics are \emph{locally testable} (which is a proper subfamily of the regular languages)~\cite{hermiller2008}.
+\Citeauthor{cleary2006} showed that the language of geodesics for the \emph{lamplighter group} is \emph{context-free} and \emph{counter} for some generating sets; and that the language of geodesics for \emph{Thompson's group $F$} is not regular for any generating set~\cite{cleary2006}.
+
+We prove \cref{thm:geodesic-growth} by constructing an algorithm that converts geodesics into \emph{patterned words}.
+From this algorithm, we find a bijection from the set of geodesics of a virtually abelian group to a certain formal language with a \emph{holonomic} growth series.
+It is then natural to ask if there is a formal-language characterisation for the language of geodesics for a virtually abelian group.
+In \cref{thm:virtually-abelian-are-blind-counter}, we obtain such a characterisation by implementing this algorithm using \emph{blind multicounter automata}.
+
+\begin{restatable*}{theoremx}{TheoremBlindMulticounter}\label{thm:virtually-abelian-are-blind-counter}
+	The language of geodesics of a virtually abelian group with respect to any finite weighted monoid generating set $S$ is blind multicounter.
+\end{restatable*}
+
+A \emph{formal language over a group} is a set of words whose letters are taken from the generating set.
+So far we have discussed our results on the language of geodesics for a group.
+In this thesis, we also study the \emph{co-word problem}, that is, the language of words that do not correspond to the group identity.
+Characterisations of such languages provide us with one measure for the computational difficulty involved with computing in a group.
+
+The \emph{word problem} of a group $G$ with respect to a finite monoid generating set $S$, denoted $\WP_S$, is the set of all words in $S^*$ that correspond to the group identity.
+We see that the word problem completely specifies a group as $\left\langle S \mid \WP_S \right\rangle$ is a presentation for $G$.
+This formal language is one characterisation of the difficulty of computing within a group, i.e., checking if two words $u,v \in S^*$ represent the same group element is equivalent to checking if the word $uv^{-1}$ is in the word problem $\WP_S$.
+The \emph{co-word problem} of a group, denoted $\coWP_S$, is the complement of the word problem in the sense that $\coWP_S = S^* \setminus \WP_S$.
+
+There are groups for which it is not possible to decide membership to the word problem.
+Interestingly, there are such groups for which the word problem is \emph{recursively enumerable} but not \emph{recursive}, that is, there is an algorithm that lists every word in the word problem (with no guarantee of order) but no such algorithm which lists out every word in the co-word problem.
+In particular, there are finitely-presented groups with unsolvable word problems.
+The existence of such examples was shown independently by \textcite{novikov1955} (see \cite{novikov1955-translated} for an English translation) and \textcite{boone1959}.
+An explicit example with 10 generators and 27 relators was given by \textcite{collins1986}, then later a simpler example with 2 generators and 27 relators was given by \textcite{wang2016}.
+We see that the word problem for any finitely-presented group is recursively enumerable (see \cref{prop:appendix/wp-fp}).
+
+Suppose that $\mathcal{F}$ is a family of formal languages that is closed under \emph{inverse word homomorphism}.
+Then, if the word or co-word problem with respect to some generating set belongs to $\mathcal{F}$, it belongs to $\mathcal{F}$ for all generating sets (see~\cref{lem:well-defined-coword}).
+Thus, for such a family it is well defined to state that a group has a word or co-word problem in $\mathcal{F}$.
+Examples of such families are the \emph{regular}, \emph{context-free} and \emph{context-sensitive} languages; the family of \emph{ET0L languages} which are a type of L-system, introduced by \textcite{rozenberg1973}, that generalises context-free languages, and form a subfamily of context-sensitive languages; and the family of \emph{blind multicounter languages}~\cite{greibach1978} which generalise counter languages and are equivalent to the class of \emph{reversal bounded multicounter languages}~\cite{baker1974} and \emph{Parikh languages}~\cite{klaedtke2003}.
+If $\mathcal{F}$ is a family of formal languages that is closed under inverse word homomorphism, and the word (resp.~co-word) problem of a group lies in $\mathcal{F}$, then we say that the group is an $\mathcal{F}$ (resp.~co-$\mathcal{F}$) group.
+
+It is interesting to find classifications of groups whose languages $\WP_S$ and $\coWP_S$ belong to certain language families.
+The study of this problem began with \citeauthor{anisimov1971} who showed that a group is finite if and only if $\WP_S$ is a regular language~\cite{anisimov1971}.
+Further classifications were obtained by \citeauthor{muller1983} who showed that a group is \emph{virtually free} if and only if its word problem is a context-free language~\cite{muller1983}; and \citeauthor{elder2008} who showed that a group is virtually abelian if and only if its word problem is a blind multicounter language~\cite{elder2008}.
+
+The study of the group co-word problem, $\coWP_S$, gives us an additional source of such classifications.
+The class of groups for which $\coWP_S$ is context-free was first studied by \textcite{holt2005}.
+Their results were then extended by \textcite{lehnert2007} who showed that Thompson's group $V$ has a context-free co-word problem.
+Combining a result of \textcite{bleak2016} with a remark in \citeauthor{lehnert2008}'s thesis~\cite[\S\,4.2]{lehnert2008}, it is conjectured that every group with context-free co-word problem is a subgroup of Thompson's group $V$.
+Moreover, it is conjectured that Grigorchuk's group does not have a context-free co-word problem~\cite{bleak2016}.
+
+The class of \emph{bounded automata groups} includes important examples such as Grigorchuk's group of intermediate growth, the Gupta-Sidki groups, and many more \cite{grigorchuk1980,gupta1983,nekrashevych2005,sidki2000}.
+It was shown by \textcite{holt2006} that bounded automata groups have \emph{indexed} co-word problems.
+ET0L languages form a proper subfamily of the indexed languages introduced by \textcite{aho1968} (see Corollary~4.1 in~\cite{culik1974} and Proposition~4.5 in~\cite{ehrenfeucht1976}).
+For the case of Grigorchuk's group, it was later shown by \citeauthor{ciobanu2018} that the co-word problem is ET0L~\cite{ciobanu2018}.
+They proved this result by explicitly constructing an ET0L grammar to recognise the co-word problem.
+In \cref{thm:bounded automata is ET0L} we use an equivalent machine model to generalise this result to all bounded automata groups.
+
+\begin{restatable*}{theoremx}{TheoremBoundedAutomata}\label{thm:bounded automata is ET0L}
+	Every finitely-generated bounded automata group is co-ET0L.
+\end{restatable*}
+
+All results in this thesis are with respect to monoid generating sets for groups.
+In particular, this means that we do not assume that our generating sets are \emph{symmetric}.
+For example, the group of integers $\mathbb{Z} = \left\langle a \mid -\right\rangle$ is generated by $\{a^{-1}, a^3\}$.
+Moreover, we prove \cref{thm:geodesic-growth,thm:virtually-abelian-are-blind-counter} for each finite weighted monoid generating set.
+That is, for each generator we associate a positive integer weight, and we say that a word is a geodesic if it represents an element with minimal weight.
+Notice that we may recover the usual definition of a geodesic by choosing the weight of each generator to be one.
+
+\section{Structure}
+
+This thesis is structured as follows.
+In \cref{chp:formal-language-and-automata}, we provide background on formal language theory and define the families of formal languages that are used in our proofs.
+In \cref{chp:coword-problems} we study the co-word problem for bounded automata groups, and prove \cref{thm:bounded automata is ET0L}.
+We then return to formal language theory in \cref{chp:polyhedral} where we define the family of polyhedrally constrained languages.
+Then, in \cref{chapter:polynomial-geodesic-growth} we prove provide a characterisation of the language of geodesics and geodesic growth of virtually abelian groups by proving \cref{thm:geodesic-growth,thm:virtually-abelian-are-blind-counter}.
+Finally, in \cref{chapter:virtually-heisenberg} we consider virtually nilpotent groups and prove \cref{thm:main}.
+
+\section{Attribution of Results}
+
+\Cref{thm:geodesic-growth,thm:virtually-abelian-are-blind-counter} are published in the single-authored paper~\cite{bishop2021}.
+\Cref{thm:main} is joint work with my supervisor, Murray Elder, a preprint of this work is available in~\cite{bishop2020}.
+\Cref{thm:bounded automata is ET0L} is also joint work with Elder and has appeared in the conference proceedings of LATA (Language and Automata Theory and Applications) 2019~\cite{bishop2019}.
+
+\section{Notation}\label{chapter:notation}
+
+Let $\mathbb{N} = \{0,1,2,\ldots\}$ denote the set of nonnegative integers, including zero, and $\mathbb{N}_+ = \{1,2,3,\ldots\}$ the set of positive integers.
+
+Let $G$ be a group, and let $g,h \in G$, then $[g,h] = ghg^{-1}h^{-1}$ and $g^h = h g h^{-1}$.
+Given two subgroups $H,K \leqslant G$, we write $[H,K]$ for the subgroup
+\[
+	[H,K] = \left\langle\left\{ [h,k] \mid h \in H,\ k \in K \right\}\right\rangle.
+\]
+A group $G$ is \emph{$k$-step nilpotent} if there is a finite sequence of subgroups
+\[
+	G_0 = G,\ 
+	G_1 = [G,G_0],\ 
+	G_2 = [G,G_1],\ 
+	G_3 = [G,G_2],\ 
+	\ldots,\ 
+	G_k = [G,G_{k-1}] = \{1\}.
+\]
+Notice that the $1$-step nilotent groups are precisely the abelian groups.
+Moreover, for each $k$, the set of $(k+1) \times (k+1)$ invertible upper-triangular integer matrices with 1's on their diagonal form a $k$-step nilpotent group.
+In fact, it is a result of \citeauthor{auslander1967} that each nilpotent (or more generally each \emph{polycyclic}) group has a faithful representation in $\mathrm{SL}(n,\mathbb{Z})$ for some $n$~\cite[Theorem~2]{auslander1967}.
+
+Let $\mathcal{P}$ be some group property, e.g., being abelian, nilpotent, or free.
+Then, we say that a group is \emph{virtually $\mathcal{P}$} is it has a finite-index subgroup with the property $\mathcal{P}$.
+For example, we say that a group is virtually nilpotent if it has a finite-index nilpotent subgroup.
+
+Let $G$ be a group with a finite generating set $S$, then we write $S^*$ for the set of all words, including the empty word $\varepsilon \in S^*$, in the letters of $S$; and $\overline{\sigma} \in G$ for the group element corresponding to the word $\sigma \in S^*$.
+We endow $S$ with a weighting, that is, for each generator $s \in S$ we assign a positive integer weight $\omega(s) \in \mathbb{N}_+$.
+We then say that $S$ is a finite weighted generating set for the group $G$.
+The \emph{weight} of a word $\sigma = \sigma_1 \sigma_2 \cdots \sigma_k \in S^*$ is then given by
+$
+	\omega(\sigma)
+	=
+	\sum_{i=1}^k
+	\omega(\sigma_i)
+$.
+Moreover, we write $|\sigma|_S = k$ for the \emph{word length} of $\sigma$.
+The \emph{weighted length} of an element $g \in G$ is then defined as the minimum weight required to represent it as a word, that is,
+\[
+	\ell_S(g)
+	=
+	\min\{
+		\omega(\sigma)
+	\mid
+		\overline{\sigma} = g
+		\text{ where }
+		\sigma \in S^*
+	\}.
+\]
+We may now define the volume growth function $a_S \colon \mathbb{N} \to \mathbb{N}$ as follows.
+
+\begin{definition}\label{defn:volume-growth}
+	The \emph{volume growth function} $a_S\colon \mathbb{N} \to \mathbb{N}$ is defined as
+	\[
+		a_S(n) = \#\{
+			g \in G
+		\mid
+			\ell_S(g) \leq n
+		\}.
+	\]
+	That is, $a_S(n)$ counts the elements which can be represented by a word of length $n$ or less.
+\end{definition}
+
+We say that a word $\sigma \in S^*$ is a \emph{geodesic} if it represents $\overline{\sigma}$ with minimal weight, that is, if $\omega(\sigma) = \ell_S(\overline{\sigma})$.
+We write $\GeodesicWords_S$ for the set of all geodesic words with respect to the generating set $S$, that is,
+\[
+\GeodesicWords_S
+=
+\{
+\sigma \in S^*
+\mid
+\omega(\sigma) = \ell_S(\overline{\sigma})
+\}.
+\]
+We then define the \emph{geodesic growth function} $\gamma_S\colon \mathbb{N} \to \mathbb{N}$ as follows.
+
+\begin{definition}\label{defn:geodesic-growth}
+	The \emph{geodesic growth function} $\gamma_S \colon \mathbb{N} \to \mathbb{N}$ is defined as
+	\[
+	\gamma_{S}(n)
+	=
+	\#
+	\{
+	\sigma \in \GeodesicWords_S
+	\mid
+	\omega_S(\sigma) \leq n
+	\}
+	\]
+	This function counts the number of geodesic words of length $n$ or less.
+\end{definition}
+
+Notice that the volume and geodesic growth functions can be at most exponential as
+\[
+		a_S(n)
+	\leq
+		\gamma_S(n)
+	\leq
+		\sum_{i=0}^n |S|^{i}
+	\leq
+		|S|^{n+1}.
+\]
+We say that a (volume/geodesic) growth function $f \colon \mathbb{N} \to \mathbb{N}$ has
+\begin{itemize}
+	\item \emph{polynomial growth} if there is some $\beta,d \in \mathbb{N}_+$ such that $f(n) \leq \beta n^d$ for each $n \geq 1$;
+	\item \emph{exponential growth} if there is an $\alpha \in \mathbb{R}$ with $\alpha > 1$ such that $f(n) \geq \alpha^n$; and
+	\item \emph{intermediate growth} if its growth is neither polynomial nor exponential.
+\end{itemize}
+Notice that the volume and geodesic growth functions are submultiplicative, that is, if $f\colon \mathbb{N} \to \mathbb{N}$ is a growth function, then $f(n+m) \leq f(n) f(m)$ for each $n,m \in \mathbb{N}$.
+Thus, we may apply the following result.
+
+\begin{lemma}[\citeauthor{fekete1923}'s lemma~\cite{fekete1923}]\label{lemma:fekete}
+	If $f\colon \mathbb{N} \to \mathbb{N}$ is submultiplicative, then the \emph{growth rate}
+	$
+		\alpha_f = \lim_{n \to \infty} \sqrt[n]{f(n)}
+	$ is defined.
+\end{lemma}
+
+From \cref{lemma:fekete}, we see that a function $f \colon \mathbb{N} \to \mathbb{N}$ has exponential growth if and only if the growth rate $\alpha_f > 1$.
+
+In this thesis, we are interested in studying the asymptotics of growth functions by considering their associated generating functions.
+We write $A_S$ and $\Gamma_S$ for the generating functions associated with $a_S$ and $\gamma_S$, respectively.
+
+\begin{definition}\label{defn:growth-series}
+	We write
+	\[
+	A_S(z) = \sum_{n = 0}^\infty a_S(n) z^n
+	\quad\text{and}\quad
+	\Gamma_S(z) = \sum_{n = 0}^\infty \gamma_S(n) z^n
+	\]
+	for the \emph{volume} and \emph{geodesic growth series}, respectively.
+\end{definition}
+
+We write $\mathbf{x} = (x_1,x_2,\ldots,x_m)$ for a finite list of variables.
+Then, for each vector $\mathbf{n} = (n_1,n_2,\ldots,n_m)$, we then write $\mathbf{x}^\mathbf{n} = x_1^{n_1} x_2^{n_2} \cdots x_m^{n_m}$.
+We may write a multivariate generating series as $f(\mathbf{x}) = \sum_{\mathbf{n} \in \mathbb{N}^m} c_\mathbf{n} \mathbf{x}^{\mathbf{n}}$ where each $c_\mathbf{n}$ is a constant.
+We write $\mathbb{C}[[\mathbf{x}]]$, $\mathbb{C}[\mathbf{x}]$, $\mathbb{C}((\mathbf{x}))$, and $\mathbb{C}(\mathbf{x})$ for the class of formal power series, polynomials, formal Laurent series, and rational functions, respectively, over the variables $\mathbf{x} = (x_1,x_2,\ldots,x_m)$.
+Moreover, we write $\partial_{x_i} f(\mathbf{x})$ for the formal partial derivative of $f(\mathbf{x})$ with respect to $x_i$.
+We use this notation in \cref{sec:generating-functions} where we define multivariate generating functions and the classes of rational, algebraic and holonomic power series.
+
+Let $G$ be a group with finite monoid generating set $S$, then the \emph{word} and \emph{co-word} problem of $G$ with respect to $S$ are given as
+\[
+	\WP(G,S) = \{ w \in S^* \mid \overline{w} = 1_G \}
+	\quad\text{and}\quad
+	\coWP(G,S) = \{ w \in S^* \mid \overline{w} \neq 1_G \},
+\]
+respectively.
+Notice here that $\coWP(G,S) = S^* \setminus \WP(G,S)$, that is, the two sets are complements of each another with respect to the set $S^*$.

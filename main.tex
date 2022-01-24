@@ -1,0 +1,241 @@
+\RequirePackage[l2tabu, orthodox]{nag}
+
+\documentclass[
+	11pt
+	,a4paper
+	,twoside=semi %<- remove =semi when in print
+]
+{scrbook}
+%% the following is for the print version with 9mm BCOR
+%\areaset[9mm]{147mm}{207.9mm}
+
+\usepackage{float}
+\usepackage{scrhack}
+
+\renewcommand*{\figureformat}{\figurename~\thefigure}
+
+% localisation settings
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[australian]{babel}
+\usepackage{csquotes}
+
+\usepackage{slantsc} % needed for scit that is {\itshape \textsc{Text}}
+
+% removes spacing in all itemized list
+\usepackage{enumitem}
+\setlist{nosep}
+
+% set a custom chapter style
+\renewcommand\rm\rmfamily
+\renewcommand\sf\sffamily
+\usepackage[Lenny]{fncychap}
+
+% graphics
+\usepackage{graphicx}
+\usepackage{graphbox}
+
+% cross referencing
+\usepackage{xcolor}
+\definecolor{darkblue}{rgb}{0.0, 0.0, 0.55}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{%
+	% link colours
+	colorlinks=true,%
+	linkcolor = darkblue,
+	anchorcolor = darkblue,
+	citecolor = darkblue,
+	filecolor = darkblue,
+	urlcolor = darkblue,
+	% links in table of contents
+	linktoc=page
+}
+\usepackage{bookmark}
+
+% improve kerning for PDF output
+\usepackage{microtype}
+
+% make hyperref to top of figures
+\usepackage[all]{hypcap}
+
+% math packages
+\usepackage{amsfonts,amsmath,amsthm,amssymb,mathtools,stmaryrd,mathrsfs}
+%\usepackage{scalerel}
+
+% Restateable theorem:
+% the thmtool package imports the obsolete package remreset but doesn't use it.
+% the following performs
+%  1. starts supresses warnings from remreset
+%  2. imports thmtool and thm-reset for restateable theorems
+%  3. stops supressing warnings from remreset
+% This fix works for all versions of thmtools
+\usepackage{silence}
+\WarningFilter[remsetFilter]{remreset}{The remreset package is obsolete}
+\ActivateWarningFilters[remsetFilter]
+\usepackage{thmtools, thm-restate}
+\DeactivateWarningFilters[remsetFilter]
+
+% cross referencing theorems
+\usepackage[capitalise,noabbrev,sort]{cleveref}
+
+% custom theorems
+\numberwithin{equation}{chapter}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{note}[theorem]{Note}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{notation}[theorem]{Notation}
+%\renewcommand*{\thecorollary}{\arabic{chapter}.\arabic{theorem}(\roman{corollary})}
+
+% additional theorem with letters
+\newtheorem{theoremx}{Theorem}
+\renewcommand{\thetheoremx}{\Alph{theoremx}}
+
+\crefalias{theoremx}{theorem}
+
+% stylistic choice
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+
+% Notation
+
+\newcommand\vH{\Heisenberg \rtimes C_2}
+\newcommand\Heisenberg{H_3}
+
+\newcommand\WP{\mathrm{WP}}
+\newcommand\coWP{\mathrm{coWP}}
+\newcommand\ReducedWords{\mathrm{Red}}
+\newcommand\GeodesicWords{\mathrm{Geod}}
+\newcommand{\Parikh}{\Phi}
+
+\newcommand{\GS}{\textrm{GS}}
+
+\newcommand{\CannonGroup}{G}
+
+% The following provides a command
+%  \proofsection{name}
+
+\usepackage{trimspaces}
+
+\makeatletter
+\newcommand\proofsection@gobblepars{%
+	\@ifnextchar\par%
+	{\expandafter\proofsection@gobblepars\@gobble}%
+	{}}
+
+\def\proofsection#1{%
+	\medskip%
+	\noindent%
+	{\itshape\trim@spaces{#1}.}%
+	\nopagebreak\smallskip%
+	\nopagebreak\par%
+	\nopagebreak\noindent%
+	\proofsection@gobblepars}
+\makeatother
+
+% citations
+\usepackage[
+	backend=biber,
+	style=numeric-comp,
+	maxcitenames=10,
+	maxbibnames=100,
+	safeinputenc,
+	useprefix]{biblatex}
+\addbibresource{main.bib}
+
+% make sure that names are not sorted by prefix first
+\DeclareSortingNamekeyTemplate{
+	\keypart{
+		\namepart{family}}
+	\keypart{
+		\namepart{prefix}}
+	\keypart{
+		\namepart{given}}
+	\keypart{
+		\namepart{suffix}}
+}
+% make sure that the prefix is not capitalised
+%  BibLaTeX will capitalise the first letter in some cases, this stops this
+\renewbibmacro{begentry}{\midsentence}
+
+% make sure that biblatex uses a non-breaking space in \textcite
+\renewcommand\namelabeldelim{\addnbspace}
+
+% document information
+\titlehead{%
+	Doctor of Philosophy\\
+	PhD Thesis: Mathematics}
+\subject{Dissertation}
+\title{Geodesic Languages and Co-Word Problems over Groups}
+\author{Alex Bishop}
+\date{December 2021}
+\publishers{Supervisor: Professor Murray Elder}
+\makeatletter
+	\def\@thanks{%
+		\vspace*{\fill}
+		
+		School of Mathematical and Physical Sciences\\
+		Faculty of Science\\
+		University of Technology Sydney}
+\makeatother
+%
+%\uppertitleback{}
+%\lowertitleback{}
+
+\makeatletter
+\hypersetup{
+	pdfinfo={
+		Author={\@author},
+		Title={\@title},
+		Subject={\@subject},
+	}
+}
+\makeatother
+
+%\usepackage[final]{pdfpages}
+
+\begin{document}
+
+\frontmatter
+
+%\includepdf[pages=-]{titlepage.pdf}
+
+\maketitle
+
+\include{chapter/00_Certificate}
+\include{chapter/00_Abstract}
+\include{chapter/00_Acknowledgements}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Contents}
+\tableofcontents
+
+\mainmatter
+
+\include{chapter/01_Introduction}
+\include{chapter/02_Formal_Language}
+\include{chapter/03_CoWord_Problems}
+\include{chapter/04_Polyhedral}
+\include{chapter/05_Virtually_Abelian}
+\include{chapter/06_Virtually_Heisenberg}
+
+\appendix
+
+\include{chapter/A_Additional_Proofs}
+
+\backmatter
+
+\printbibliography[
+	heading=bibintoc,
+	title={References}
+]
+
+\end{document}

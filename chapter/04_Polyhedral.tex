@@ -1,0 +1,186 @@
+\chapter{Polyhedral Sets and Polyhedrally Constrained Languages}\label{chp:polyhedral}
+
+In this chapter we introduce the family of \emph{polyhedrally constrained languages} which we use in the proof of \cref{thm:geodesic-growth}.
+This family of languages is a generalisation of linearly constrained languages, as in \cref{defn:linearly-constrained-language}.
+It is a result of \textcite{massazza1993} that the generating function of linearly constrained languages is holonomic (see~\cref{prop:lcl-is-holonomic}).
+In \cref{prop:polyhedrally-constrained-is-holonomic}, we show that the family of polyhedrally constrained languages also have holonomic (multivariate) generating functions.
+
+\Textcite{benson1983} introduced the concept of \emph{polyhedral sets} to compute the volume growth of virtually abelian groups, in particular, for each virtually abelian group \citeauthor{benson1983} constructed a polyhedral set whose (volume) generating function is the volume growth series of the group.
+In \cref{sec:virtually-abelian-groups} we apply a similar argument to construct a \emph{polyhedrally constrained language} whose generating function is the geodesic growth series of a virtually abelian group.
+We define and study the class of polyhedral sets in \cref{sec:polyhedral-sets}, and the family of polyhedrally constrained languages in \cref{sec:polyhedrally-constrained-languages}.
+
+\section{Polyhedral Sets}\label{sec:polyhedral-sets}
+
+A \emph{polyhedral set}, as we see in \cref{defn:polyhedral-set}, is a subset of $\mathbb{Z}^n$ that encodes the integer solutions to finitely many systems of linear equations, inequalities and congruences.
+The class of polyhedral sets is closed under Boolean expressions, Cartesian products, and (inverse) mapping by integer affine transformation (see \cref{prop:affine-transforms-of-polyhedral-sets,prop:closure-properties-of-polyhedral-sets}).
+The class of polyhedral sets and their closure properties are essential to our study of the language of geodesics for virtually abelian groups in \cref{sec:virtually-abelian-groups}.
+
+\begin{definition}\label{defn:polyhedral-set}
+A subset $\mathcal{E} \subseteq \mathbb{Z}^m$ is called an \emph{elementary region} if it can be expressed as
+\[
+	\left\{
+		z \in \mathbb{Z}^m
+	\, \middle\vert \,
+		a\cdot z = b
+	\right\},
+	%
+	\ 
+	%
+	\left\{
+		z \in \mathbb{Z}^m
+	\, \middle\vert \,
+		a\cdot z > b
+	\right\}
+	%
+	\text{ or } 
+	%
+	\left\{
+		z \in \mathbb{Z}^m
+	\, \middle\vert \,
+		a\cdot z \equiv b\ (\bmod\ c)
+	\right\}
+\]
+for some $a \in \mathbb{Z}^m$ and $b,c\in \mathbb{Z}$ with $c > 0$.
+A \emph{basic polyhedral set} is a finite intersection of elementary regions;
+and a \emph{polyhedral set} is a finite disjoint union of basic polyhedral sets.
+\end{definition}
+
+From this definition we see that $\emptyset$ and $\mathbb{Z}^m$ are elementary regions, and that $\mathbb{N}^m$ is a basic polyhedral set.
+In \cref{prop:closure-properties-of-polyhedral-sets} we see that the class of polyhedral sets is closed under Boolean expressions and Cartesian products.
+
+\begin{proposition}[Proposition~13.1~and~Remark~13.2~in~\cite{benson1983}]\label{prop:closure-properties-of-polyhedral-sets}
+	The class of polyhedral subsets of $\mathbb{Z}^m$ is{\tiny } closed under finite union, finite intersection and set difference.
+	Moreover, the class of polyhedral sets is closed under Cartesian product.
+\end{proposition}
+
+A map $E \colon \mathbb{Z}^m \to \mathbb{Z}^n$ is an \emph{integer affine transform} if it can be written as $E(v) = vA + b$ where $A \in \mathbb{Z}^{m \times n}$ is a matrix and $b \in \mathbb{Z}^n$ is a vector.
+In \cref{prop:affine-transforms-of-polyhedral-sets} we see that the class of polyhedral sets is closed under (inverse) mapping by integer affine transformations.
+
+\begin{proposition}[Propositions~13.7~and~13.8~in~\cite{benson1983}]\label{prop:affine-transforms-of-polyhedral-sets}
+	Suppose that $\mathcal{P} \subseteq \mathbb{Z}^m$ and $\mathcal{Q} \subseteq \mathbb{Z}^n$ are polyhedral sets, and $E\colon\mathbb{Z}^m\to\mathbb{Z}^n$ is an integer affine transform.
+	Then, $E(\mathcal{P})$ and $E^{-1}(\mathcal{Q})$ are both polyhedral sets.
+\end{proposition}
+
+Notice that our definition of $n$-atoms and $n$-constraints in \cref{defn:n-constraints} is similar to that of elementary regions and polyhedral sets, respectively, without modular arithmetic.
+From the closure properties in \cref{prop:closure-properties-of-polyhedral-sets} we see that $n$-constraints form a subclass of the polyhedral subsets of $\mathbb{Z}^n$.
+It can be verified by the reader that, for each $n \geqslant 1$,
+\[
+	\{
+		(x,0,0,\ldots,0) \in \mathbb{Z}^n
+	\mid
+		x \equiv 0\ (\bmod\ 2)
+	\}
+\]
+is a polyhedral set but not an $n$-constraint, and thus the class of $n$-constraints form a proper subclass of the polyhedral subsets of $\mathbb{Z}^n$.
+In the following section, we generalise the family of linearly constrained languages, defined in \cref{defn:linearly-constrained-language}, to the family of \emph{polyhedral constrained languages} which we use in the proof of \cref{thm:geodesic-growth}.
+
+\section{Polyhedrally Constrained Languages}\label{sec:polyhedrally-constrained-languages}
+
+In \cref{sec:constrained-languages}, we saw that a constrained language, $L(U,\mathcal{C})$, is the intersection of an unambiguous context-free language $U \subseteq \Sigma$ and the set of words whose Parikh images belong to a set $\mathcal{C} \subseteq \mathbb{Z}^{|\Sigma|}$.
+Moreover, we defined the family of linearly constrained languages in \cref{defn:linearly-constrained-language} as the constrained languages where $\mathcal{C}$ is a $|\Sigma|$-constraint.
+In this section we generalise this definition to the family of \emph{polyhedrally constrained languages} as follows.
+
+\begin{definition}\label{defn:polyhedrally-constrained-language}
+	A language is \emph{polyhedraly constrained} if it can be written as
+	\[
+		L(U,\mathcal{P})
+		=
+		\left\{
+			w \in U \subseteq \Sigma^*
+		\mid
+			\Parikh_\Sigma(w) \in \mathcal{P}
+		\right\}
+	\]
+	where $U$ is an unambiguous context-free language, and $\mathcal{P}$ is a polyhedral set.
+\end{definition}
+
+In \cref{sec:virtually-abelian-groups} we will not require the full power of polyhedrally constrained languages, in particular, we only require polyhedrally constrained languages $L(U,\mathcal{P})$ where $U$ is a regular language.
+It can then be shown that such languages form a subfamily of the \emph{RCM languages} introduced by \textcite{castiglione2017}, moreover, they showed that the single-variable generating functions of these languages are holonomic.
+In \cref{prop:polyhedrally-constrained-is-holonomic}, we show that the multivariate generating function of each polyhedrally constrained language is holonomic.
+We make use of this characterisation in the proof of \cref{thm:geodesic-growth}.
+
+\begin{proposition}\label{prop:polyhedrally-constrained-is-holonomic}
+	The multivariate generating function of a polyhedrally constrained language is holonomic.
+\end{proposition}
+
+\begin{proof}	
+	Let $L(U,\mathcal{P}) \in \Sigma^*$ be a polyhedrally constrained language.
+	From the definition of polyhedral sets, we may decompose $\mathcal{P} \subseteq \mathbb{Z}^{|\Sigma|}$ into a union of finitely many disjoint basic polyhedral sets
+	$\mathcal{P} = \bigcup_{i=1}^L \mathcal{B}_i$.
+	Moreover, each such basic polyhedral set $\mathcal{B}_i \subseteq \mathbb{Z}^{|\Sigma|}$ can be written as a finite intersection of elementary regions
+	\begin{multline*}
+		\mathcal{B}_i
+		=
+		\bigcap_{j = 1}^{K_{i,1}}
+		\{
+			v \in \mathbb{Z}^{|\Sigma|}
+		\mid
+			\alpha_{i,j} \cdot v = \beta_{i,j}
+		\}
+		\cap
+		\bigcap_{j = 1}^{K_{i,2}}
+		\{
+			v \in \mathbb{Z}^{|\Sigma|}
+		\mid
+			\xi_{i,j} \cdot v > \lambda_{i,j}
+		\}
+		\\\cap
+		\bigcap_{j = 1}^{K_{i,3}}
+		\{
+			v \in \mathbb{Z}^{|\Sigma|}
+		\mid
+			\zeta_{i,j} \cdot v \equiv \eta_{i,j}\ (\bmod\ \theta_{i,j})
+		\}
+	\end{multline*}
+	where each $\alpha_{i,j},\xi_{i,j},\zeta_{i,j} \in \mathbb{Z}^{|\Sigma|}$, each $\beta_{i,j},\lambda_{i,j}, \eta_{i,j} \in \mathbb{Z}$, and $\theta_{i,j} \in \mathbb{N}_+$.
+	
+	From the definition of constrained language we see that $L(U,\mathcal{P})$ is the union of disjoint polyhedrally constrained languages $L(U,\mathcal{B}_i)$.
+	We see that if each $L(U,\mathcal{B}_i)$ has a multivariate generating function of $f_i(x_1,x_2,\ldots,x_{|\Sigma|})$, then the multivariate generating function for $L(U,\mathcal{P})$ is given by
+	\[
+		f(x_1,x_2,\ldots,x_{|\Sigma|})
+		=
+		\sum_{i=1}^L f_i(x_1,x_2,\ldots,x_{|\Sigma|}).
+	\]
+	
+	For each basic polyhedral set $\mathcal{B}_i$, we introduce a $|\Sigma|$-constraint
+	\[
+		\mathcal{C}_i
+		=
+		\bigcap_{j = 1}^{K_{i,1}}
+		\{
+			v \in \mathbb{Z}^{|\Sigma|}
+		\mid
+			\alpha_{i,j} \cdot v = \beta_{i,j}
+		\}
+		\cap
+		\bigcap_{j = 1}^{K_{i,2}}
+		\{
+			v \in \mathbb{Z}^{|\Sigma|}
+		\mid
+			\xi_{i,j} \cdot v > \lambda_{i,j}
+		\},
+	\]
+	and a monoid homomorphism $\varphi_i \colon \Sigma^* \to \prod_{j=1}^{K_{i,3}} (\mathbb{Z}/\theta_{i,j}\mathbb{Z})$ such that
+	\[
+		\varphi_i(w)
+		=
+		(
+			\zeta_{i,1} \cdot \Parikh_\Sigma(w),\,
+			\zeta_{i,2} \cdot \Parikh_\Sigma(w),\,
+			\ldots,\,
+			\zeta_{i,K_{i,3}} \cdot \Parikh_\Sigma(w)
+		);
+	\]
+	moreover, we write $R_i \in \Sigma^*$ for the inverse image
+	\[
+		R_i =
+		\varphi_i^{-1}(\{ (\eta_{i,1},\eta_{i,2},\ldots,\eta_{i,K_{i,3}}) \}).
+	\]
+	
+	Each language $R_i \in \Sigma^*$ is expressed as the inverse image of a subset of a finite monoid.
+	From \cite[Theorem~1]{rabin1959} we see that each $R_i$ is a regular language, in particular, for each $R_i$ we may construct a finite-state automaton with states given by the set $\prod_{j=1}^{K_{i,3}} (\mathbb{Z}/\theta_{i,j}\mathbb{Z})$, initial state given by $(0,\ldots,0)$, an accepting state of $(\eta_{i,1},\eta_{i,2},\ldots,\eta_{i,K_{i,3}})$, and a transition $v \to^\sigma v'$ for each state $v$ and letter $\sigma \in \Sigma$ where $v' = v + \varphi_i(\sigma)$.
+	Moreover, since the class of unambiguous context-free grammar is closed under intersection with regular language (see Theorem~6.4.1 on p.~197 of \cite{harrison1978}), we see that each $L(U \cap R_i,\mathcal{C}_i) = L(U,\mathcal{B}_i)$ is linearly constrained as in \cref{defn:linearly-constrained-language}.
+	From \cref{prop:lcl-is-holonomic}, we see that each $f_i(x_1,x_2,\ldots,x_{|\Sigma|})$ is holonomic.
+	
+	From \cref{lemma:holonomic-closure-properties}, holonomic functions are closed under addition, and thus the multivariate generating function of $L(U, \mathcal{P})$ is holonomic.
+\end{proof}

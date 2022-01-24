@@ -1,0 +1,181 @@
+\chapter{Additional Proofs}
+
+In this appendix we provide proofs of incidental statements made throughout this thesis.
+These proofs are provided in the interest of completeness.
+
+In the introduction, it was stated that the word problem for any finitely presented group is recursively enumerable.
+This is a well-known fact which we prove as follows.
+
+\begin{proposition}\label{prop:appendix/wp-fp}
+	Finitely presented groups have recursively enumerable word problems.
+\end{proposition}
+
+\begin{proof}
+	Let $G$ be a group with presentation $\left\langle X \mid R \right\rangle$ where $X$ and $R$ are both finite.
+	We then see that a word $w \in X^*$ is in the word problem if and only if we have
+	\[
+		w
+		=_{F_X}
+		\prod_{i=0}^n  u_i r_i^{\delta_i} u_i^{-1}
+	\]
+	for some $n \in \mathbb{N}$ where each $u_i \in X^*$, $\delta_j \in \{-1,1\}$ and $r_i \in R$.
+	Notice here that `$=_{F_X}$' denotes that the left and right-hand sides are the same word after free-reduction is performed, that is, they are equivalent if viewed as elements of the free group.
+	
+	We may then construct a Turing machine $M$ which takes a word $w \in X^*$ as input, then iterates through the set of all finite products $\prod_{i=0}^n  u_i r_i^{\delta_i} u_i^{-1}$.
+	At each iteration, the machine should compare the word $w$ and the result of the product.
+	The machine then terminate and accepts only if the two words are equal.
+	
+	We see that the machine $M$ accepts a word $w \in X^*$ if and only if it lies within the word problem $\WP_X$, that is, membership to the word problem $\WP_X$ is \emph{semi-decidable}.
+	
+	It is well known that a problem is semi-decidable if and only if the set of all accepted words (in this case the word problem) is recursively enumerable.
+	This can be proven by constructing a machine which checks all words in parallel using a technique known as \emph{dovetailing} (see Theorem 20.8 on p.~441 of \cite{rich2007} for a proof of this fact).
+\end{proof}
+
+In \cref{sec:linear-constraints} we gave an example of a linearly constrained language, and provided its generating function.
+In the following we show that this generating function is holonomic by explicitly constructing a system of linear differential equations which it satisfies.
+
+\begin{proposition}\label{prop:appendix/holonomic-function}
+	The multivariate power series
+	\[
+		f(x,y,z) =
+		\sum_{n \in \mathbb{N}}
+		\frac{(3n)!}{(n!)^3}
+		x^n y^n z^n
+	\]
+	satisfies the differential equations
+	\begin{equation}\label{eq:appendix/holonomic-differential-eq}
+	\left.
+	\begin{aligned}
+		(x^2 - 27 x^3 y z) \partial_x^2 f(x,y,z)
+		+ (x - 54 x^2 y z) \partial_x f(x,y,z)
+		- 6 x y z \, f(x,y,z)
+		&= 0
+		\\
+		(y^2 - 27 x y^3 z) \partial_y^2 f(x,y,z)
+		+ (y - 54 x y^2 z) \partial_y f(x,y,z)
+		- 6 x y z \, f(x,y,z)
+		&= 0
+		\\
+		(z^2 - 27 x y z^3) \partial_z^2 f(x,y,z)
+		+ (z - 54 x y z^2) \partial_z f(x,y,z)
+		- 6 x y z \, f(x,y,z)
+		&= 0.
+	\end{aligned}
+	\right\}
+	\end{equation}
+	Thus, $f(x,y,z)$ is holonomic.
+\end{proposition}
+
+\begin{proof}
+	Notice that the system of differential equations in \eqref{eq:appendix/holonomic-differential-eq} is equivalent to
+	\begin{equation}\label{eq:appendix/holonomic-differential-eq2}
+	\left.
+	\begin{aligned}
+		x^2 \partial_x^2 f(x,y,z)
+		+ x \partial_x f(x,y,z)
+		-27 x^2 \partial_x^2 (x y z \, f(x,y,z))
+		- 6 x y z \, f(x,y,z)
+		&= 0
+		\\
+		y^2 \partial_y^2 f(x,y,z)
+		+ y \partial_y f(x,y,z)
+		-27 y^2 \partial_y^2 (x y z \, f(x,y,z))
+		- 6 x y z \, f(x,y,z)
+		&= 0
+		\\
+		z^2 \partial_z^2 f(x,y,z)
+		+ z \partial_z f(x,y,z)
+		-27 z^2 \partial_z^2 (x y z \, f(x,y,z))
+		- 6 x y z \, f(x,y,z)
+		&= 0.
+	\end{aligned}
+	\right\}
+	\end{equation}
+	This can be shown using the \emph{product rule} of differentiation.
+	
+	Let
+	\[
+		f(x,y,z) =
+		\sum_{n \in \mathbb{N}}
+		\frac{(3n)!}{(n!)^3}
+		x^n y^n z^n,
+	\]
+	then
+	\begin{align*}
+			x \partial_x f(x,y,z)
+			&=
+			\sum_{n=1}^\infty
+			\frac{(3n)!}{(n!)^3}
+			\,n\,
+			x^n y^n z^n,
+		\\
+			x^2 \partial_x^2 f(x,y,z)
+			&=
+			\sum_{n=1}^\infty
+			\frac{(3n)!}{(n!)^3}
+			\,n(n-1)\,
+			x^n y^n z^n,
+		\\
+			xyz \, f(x,y,z)
+			&=
+			\sum_{n=1}^\infty
+			\frac{(3(n-1))!}{((n-1)!)^3}
+			\,
+			x^n y^n z^n,\text{ and}
+		\\
+			x^2 \partial_x^2 (xyz \, f(x,y,z))
+			&=
+			\sum_{n=1}^\infty
+			\frac{(3(n-1))!}{((n-1)!)^3}
+			\,n(n-1)\,
+			x^n y^n z^n.
+	\end{align*}
+	
+	We then see that
+	\[
+		x^2 \partial_x^2 f(x,y,z)
+		+ x \partial_x f(x,y,z)
+		-27 x^2 \partial_x^2 (x y z \, f(x,y,z))
+		- 6 x y z \, f(x,y,z)
+		=
+		\sum_{n=1}^\infty c_n x^n y^n z^n
+	\]
+	where each
+	\begin{align*}
+		c_n
+		&=
+		n^2
+		\frac{(3n)!}{(n!)^3}
+		-
+		(27n^2 - 27n + 6)
+		\frac{(3(n-1))!}{((n-1)!)^3}
+		\\
+		&=
+		\frac{1}{n}
+		\left[
+			n^3
+			\frac{(3n)!}{(n!)^3}
+			-
+			3n(3n-1)(3n-2)
+			\frac{(3(n-1))!}{((n-1)!)^3}
+		\right].
+	\end{align*}
+	Moreover, we see that each $c_n = 0$ as
+	\[
+		\frac{(3n)!}{(n!)^3}
+		=
+		\frac{3n(3n-1)(3n-2)}{n^3}
+		\cdot
+		\frac{(3(n-1))!}{((n-1)!)^3}.
+	\]
+	Thus, we have
+	\[
+		x^2 \partial_x^2 f(x,y,z)
+		+ x \partial_x f(x,y,z)
+		-27 x^2 \partial_x^2 (x y z \, f(x,y,z))
+		- 6 x y z \, f(x,y,z)
+		=
+		0.
+	\]
+	The proofs of the other two differential equations in \eqref{eq:appendix/holonomic-differential-eq2} are the same.
+\end{proof}

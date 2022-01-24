@@ -1,0 +1,667 @@
+\chapter{Co-Word Problems}\label{chp:coword-problems}
+
+Let $G$ be a group with a finite monoid generating set $S$.
+Then, if we are given two words $u,v \in S^*$, it is a natural question to ask whether these words represent the same group element.
+This question is equivalent to asking if the word $w = uv^{-1} \in S^*$ represents the group identity.
+We then define the formal language
+\[
+	\WP_S
+	=
+	\left\{
+		w \in S^*
+	\mid
+		\overline{w} = 1
+	\right\}
+\]
+which we refer to as the \emph{word problem} with respect to the generating set $S$.
+
+For each finite monoid generating set $S$ of $G$, we see that $\left\langle S \mid \WP_S \right\rangle$ is a presentation for $G$.
+Thus, the word problem completely describes a group.
+A classification of the word problem is thus one method to characterise the complexity of a group.
+
+The study of the formal language complexity of group word problems began with \textcite{anisimov1971} who showed that the word problem is regular if and only if the group is finite.
+This was extended by \textcite{muller1983} who showed that a group has a context-free word problem if and only if it is virtually free, in which case, the word problem is deterministic context-free.
+It was shown by \textcite{elder2008} that a group has a word problem that is (deterministic) blind multicounter if and only if it is virtually abelian.
+It was shown by \textcite{holt2008} that a group has a \emph{growing context-sensitive} word problem if and only if its word problem can be solved by a certain generalisation of \emph{Dehn's algorithm}, however, this result does not appear to provide a group-theoretic classification.
+
+An alternate method of obtaining characterisation of group word problems is to characterise the \emph{co-word problem} $\coWP_S = S^* \setminus \WP_S$, that is, the formal language
+\[
+	\coWP_S
+	=
+	\left\{
+		w \in S^*
+	\mid
+		\overline{w} \neq 1
+	\right\}.
+\]
+It is known that regular and deterministic context-free languages are closed under taking set complements, see \cite[Theorem~8.4]{rich2007} and \cite[Theorem~2.42]{sipser2013}, respectively.
+Thus, the co-word problem for a group is
+\begin{itemize}
+	\item regular if and only if the group is finite; and
+	\item deterministic context-free if and only if the group is virtually free.
+\end{itemize}
+The class of groups for which $\coWP_S$ is context-free was first studied by \textcite{holt2005}, in particular, they showed that a polycyclic group has a context-free co-word problem if and only if it is virtually abelian.
+The study of co-context-free groups was later extended by \textcite{lehnert2007} who showed that Thompson's group $V$ has a context-free co-word problem.
+It is conjectured \cite[Conjecture~5]{bleak2016} that a group has a context-free co-word problem if and only if it is a subgroup of Thompson's group $V$.
+However, a potential counter-example to such a classification is provided in \cite{berns-zieve2014}.
+
+It was shown by \textcite{holt2006} that the class of \emph{bounded automata groups} have co-word problems that can be recognised as \emph{indexed languages}, as defined by \textcite{aho1968}.
+The class of bounded automata groups includes important examples such as Grigorchuk's group of intermediate growth, the Gupta-Sidki groups, and many more~\cite{grigorchuk1980,gupta1983,nekrashevych2005,sidki2000}.
+
+ET0L languages form a proper subfamily of the indexed languages (see Corollary~4.1 in~\cite{culik1974} and Proposition~4.5 in~\cite{ehrenfeucht1976}).
+For the specific case of the Grigorchuk group, \textcite{ciobanu2018} constructed an ET0L grammar for the co-word problem.
+In this chapter, we generalise this result by showing that the co-word problem for any bounded automata group is ET0L.
+In particular, for each bounded automata group, we construct a cspd automaton which recognises the language of geodesics.
+
+\section{Generating Sets}\label{sec:background-coword-problems}
+
+Many interesting families of formal language are closed under inverse word homomorphism, as defined in \cref{defn:closed-under-inv-word-hom}.
+For example, the class of regular, context-free and ET0L languages have this closure property.
+
+\begin{definition}\label{defn:closed-under-inv-word-hom}
+	A family of formal languages $\mathcal{F}$ is \emph{closed under inverse word homomorphism}, if for each language $L \in \mathcal{F} \subseteq \Sigma^*$, and each monoid homomorphism $h \colon \Gamma^* \to \Sigma^*$ where $\Gamma$ is an alphabet, the language
+	$
+		h^{-1}(L)
+		=
+		\{
+			w \in \Gamma^*
+			\mid
+			h(w) \in L
+		\}
+	$
+	lies within $\mathcal{F}$.
+\end{definition}
+
+We then see that the formal language complexity of the co-word problem for a group is well defined in the following sense.
+
+\begin{lemma}\label{lem:well-defined-coword}
+	Let $G$ be a group with a finite monoid generating set $S$.
+	If $\coWP_S \in \mathcal{F}$ and $\mathcal{F}$ is closed under inverse word homomorphism, then $\coWP_X \in \mathcal{F}$ for each finite monoid generating set $X$ of $G$.
+\end{lemma}
+
+\begin{proof}
+	For each $x \in X$ we choose a word $w_x \in S^*$ such that $\overline{x} = \overline{w_x}$.
+	We then define a monoid homomorphism $h \colon X^* \to S^*$ where $h(x) = w_x$ for each $x \in X$.
+	We see that $\coWP_X = h^{-1}(\coWP_S)$, and thus $\coWP_X \in \mathcal{F}$ as required.
+\end{proof}
+
+Let $\mathcal{F}$ be a family of languages which is closed under inverse word homomorphism.
+Then, a group is co-$\mathcal{F}$ if its co-word problem lies in the class $\mathcal{F}$, for any and thus all generating sets.
+It was shown by \textcite[Corollary~3.2~on~p.~40]{culik1974} that ET0L languages form a \emph{full AFL}, one of the defining properties of this being closure with respect to inverse word homomorphism.
+From \cref{lem:well-defined-coword} it is well defined to ask if a group is co-ET0L.
+
+\section{Bounded Automata Groups}\label{sec:bounded-automata-groups}
+
+In this section, we define the class of \emph{bounded automata groups}.
+Each such group is a group of automorphisms of an infinite rooted tree and can be completely described using finitely many finite-state rewrite automata.
+We begin by defining rooted trees as follows.
+
+For $d \geq 2$, let $\mathcal{T}_d$ denote the $d$-regular rooted tree, that is, the infinite rooted tree where each vertex has exactly $d$ children.
+We identify the vertices of $\mathcal{T}_d$ with words in $\Sigma^*$ where $\Sigma = \{ a_1, a_2, \ldots, a_d \}$.
+In particular, we identify the root with the empty word $\varepsilon \in \Sigma^*$ and we identify the $k$-th child of each vertex $v \in \mathrm{V}(\mathcal{T}_d)$ with the word $v a_k$, see \cref{fig:tree-vertex-labelling}.
+
+\begin{figure}[h!t]
+	\centering
+	\includegraphics{figure/labelledTree}
+	\caption{A labelling of the vertices of $\mathcal{T}_d$.}
+	\label{fig:tree-vertex-labelling}
+\end{figure}
+
+Recall that an automorphism of a graph is a bijective mapping of the vertex set that preserves adjacency, thus an automorphism of $\mathcal{T}_d$ preserves the root and levels of the tree.
+We denote the group of automorphisms of $\mathcal{T}_d$ as $\mathrm{Aut}(\mathcal{T}_d)$.
+We write $\mathrm{Sym}(\Sigma)$ for the \emph{permutation group of $\Sigma$}.
+An important observation  is that $\mathrm{Aut}(\mathcal{T}_d)$ can be seen as the wreath product $\mathrm{Aut}(\mathcal{T}_d) \wr \mathrm{Sym}(\Sigma)$, since any automorphism $\alpha \in \mathrm{Aut}(\mathcal{T}_d)$ can be written uniquely as $\alpha = (\alpha_1, \alpha_2, \ldots, \alpha_d) \cdot \sigma$ where each $\alpha_i \in \mathrm{Aut}(\mathcal{T}_d)$ is an automorphism of the sub-tree with root $a_i$, and $\sigma \in \mathrm{Sym}(\Sigma)$ is a permutation  of the first level.
+
+Let $\alpha \in \mathrm{Aut}(\mathcal{T}_d)$ where $\alpha = (\alpha_1, \alpha_2, \ldots, \alpha_d) \cdot \sigma \in \mathrm{Aut}(\mathcal{T}_d) \wr \mathrm{Sym}(\Sigma)$.
+Then, for any letter $a_i \in \Sigma$, the \emph{restriction of $\alpha$ to $a_i$}, denoted $\left.\alpha\right\vert_{a_i} = \alpha_i$, is the action of $\alpha$ on the sub-tree with root $a_i$ (which is given by $\alpha_i$).
+Given any vertex $w = w_1 w_2 \cdots w_k \in \Sigma^*$ of $\mathcal{T}_d$, we can define the \emph{restriction of $\alpha$ to $w$} recursively as
+\[
+	\left.\alpha\right\vert_w
+	=
+	\left.
+		\left(\left.\alpha\right\vert_{w_1w_2\cdots w_{k-1}}\right)
+	\right\vert_{w_k}
+\]
+and thus describe the action of $\alpha$ on the sub-tree with root $w$.
+
+The action of each element of a bounded automata group on its associated tree can be described using a certain type of finite-state rewrite automata, which we will refer to as a $\Sigma$-automaton.
+We define this class of automata as follows.
+
+\begin{definition}\label{defn:sigma-autom}
+A \emph{$\Sigma$-automaton}, $(\Gamma,v)$, is a finite directed graph with a distinguished vertex $v$, called the initial state, and a $(\Sigma\times\Sigma)$-labelling of its edges, such that each vertex has exactly $\left\vert\Sigma\right\vert$ outgoing edges; and for each $a \in \Sigma$ each vertex has exactly one incoming edge of the form $(a,a')$ and exactly one outgoing edge of the form $(a',a)$.
+Thus, the outgoing edges define a permutation of $\Sigma$.
+\end{definition}
+
+From a $\Sigma$-automaton, we may then define a tree automorphism as follows.
+
+\begin{definition}\label{defn:automata-automorphism}
+Let $(\Gamma,v)$ be a $\Sigma$-automaton with $\Sigma = \{a_1,\ldots,a_d\}$, then we define an automorphism $\alpha_{(\Gamma,v)} \in \mathrm{Aut}(\mathcal{T}_d)$ as follows.
+Notice that for each vertex $b_1 b_2 \cdots b_k \in \mathrm{V}\!\left(\mathcal{T}_d\right) = \Sigma^*$, there is a unique path in the graph $\Gamma$ starting from the initial vertex, $v$, of the form
+$
+	(b_1, b_1')
+	\,
+	(b_2, b_2')
+	\,
+	\cdots
+	\,
+	(b_k, b_k')
+$.
+We define $\alpha_{(\Gamma,v)}$ such that $\alpha_{(\Gamma,v)} (b_1 b_2 \cdots b_k) = b_1' b_2' \cdots b_k'$.
+From the definition of $\Sigma$-automata it the follows that $\alpha_{(\Gamma,v)}$ is an isomorphism.
+\end{definition}
+
+We provide an example of a $\Sigma$-automaton in \cref{fig:sigma_autom_grigorchuk}.
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics{figure/grigorchuk}
+	\caption{A $\Sigma$-automaton for the generator $b$ in Grigorchuk's group.}
+	\label{fig:sigma_autom_grigorchuk}
+\end{figure}
+
+An \emph{automaton automorphism}, $\alpha$, of the tree $\mathcal{T}_d$ is an automorphism for which there exists a $\Sigma$-automaton, $(\Gamma,v)$, such that $\alpha = \alpha_{(\Gamma,v)}$.
+We write $\mathcal{A}\!\left(\mathcal{T}_d\right)$ for the set of all automata automorphisms of the tree $\mathcal{T}_d$.
+The set $\mathcal{A}\!\left(\mathcal{T}_d\right)$ forms a group~\cite[Proposition~1]{sidki2000}.
+Moreover, a subgroup of $\mathcal{A}(\mathcal{T}_d)$ is called an \emph{automata group}.
+
+An automorphism $\alpha \in \mathrm{Aut}(\mathcal{T}_d)$ will be called \emph{bounded} (originally defined in \cite{sidki2000}) if there exists a constant $N \in \mathbb{N}$ such that for each $k\in \mathbb{N}$, there are no more than $N$ vertices $v\in \Sigma^*$ with $\left\vert v \right\vert = k$ (i.e.\@ at level $k$) such that $\left.\alpha\right\vert_v \neq 1$.
+Thus, the action of such a bounded automorphism will, on each level, be trivial on all but (up to) $N$ sub-trees.
+The set of all such automorphisms form a group which we will denote as $\mathcal{B}(\mathcal{T}_d)$.
+The group of all \emph{bounded automaton automorphisms} is defined as the intersection $\mathcal{A}(\mathcal{T}_d) \cap \mathcal{B}(\mathcal{T}_d)$, which we will denote as $\mathcal{D}(\mathcal{T}_d)$.
+A subgroup of $\mathcal{D}(\mathcal{T}_d)$ is called a  \emph{bounded automata group}.
+
+A \emph{finitary automorphism} of $\mathcal{T}_d$ is an automorphism $\phi$ such that there exists a constant $k \in \mathbb{N}$ for which $\left. \phi \right\vert_v = 1$ for each $v \in \Sigma^*$ with $\left\vert v \right\vert = k$.
+Thus, a finitary automorphism is one that is trivial after some $k$ levels of the tree.
+Given a finitary automorphism $\phi$, the smallest $k$ for which this definition holds will be called its \emph{depth} and will be denoted as $\mathrm{depth}(\phi)$.
+We will denote the group formed by all finitary automorphisms of $\mathcal{T}_d$ as $\mathrm{Fin}(\mathcal{T}_d)$.
+See \cref{fig:finitary examples} for examples of the actions of finitary automorphisms on their associated trees (where any unspecified sub-tree is fixed by the action).
+
+\begin{figure}[!ht]
+	\centering
+	\begin{minipage}[t]{.3\linewidth}
+		\centering
+		\includegraphics{figure/finitaryA}
+	\end{minipage}
+	~
+	\begin{minipage}[t]{.3\linewidth}
+		\centering
+		\includegraphics{figure/finitaryB}
+	\end{minipage}
+	\caption{Examples of finitary automorphisms $a,b\in\mathrm{Fin}\!\left(\mathcal{T}_2\right)$.}
+	\label{fig:finitary examples}
+\end{figure}
+
+Let $\delta \in \mathcal{A}\!\left(\mathcal{T}_d\right) \setminus \mathrm{Fin}\!\left(\mathcal{T}_d\right)$. We call $\delta$ a \emph{directed automaton automorphism} if
+\begin{equation}
+	\label{eq:directed automorphism definition}
+	\delta
+	=
+	(\phi_1, \phi_2, \ldots, \phi_{k-1}, \delta', \phi_{k+1}, \ldots, \phi_d) \cdot \sigma
+	\in
+	\mathrm{Aut}\!\left(\mathcal{T}_d\right) \wr \mathrm{Sym}(\Sigma)
+\end{equation}
+where each $\phi_j$ is finitary and $\delta'$ is also directed automaton (that is, not finitary and can also be written in this form).
+We call $\mathrm{dir}(\delta) = b = a_k \in \Sigma$, where $\delta'=\delta\vert_{b}$ is directed automaton, the \emph{direction} of $\delta$; and we define the \emph{spine} of $\delta$, denoted $\mathrm{spine}(\delta) \in \Sigma^\omega$, recursively such that $\mathrm{spine}(\delta) = \mathrm{dir}(\delta) \, \mathrm{spine}(\delta')$.
+We denote the set of all directed automaton automorphisms as $\mathrm{Dir}(\mathcal{T}_d)$.
+See \cref{fig:directed examples} for examples of directed automaton automorphisms (in which $a$ and $b$ are the finitary automorphisms in \cref{fig:finitary examples}).
+
+\begin{figure}[!ht]
+	\centering
+	\begin{minipage}[t]{.3\linewidth}
+		\centering
+		\includegraphics{figure/directedX}
+	\end{minipage}
+	~
+	\begin{minipage}[t]{.3\linewidth}
+		\centering
+		\includegraphics{figure/directedY}
+	\end{minipage}
+	~
+	\begin{minipage}[t]{.3\linewidth}
+		\centering
+		\includegraphics{figure/directedZ}
+	\end{minipage}
+	\caption{Examples of directed automorphisms $x,y,z \in \mathrm{Dir}(\mathcal{T}_2)$.}
+	\label{fig:directed examples}
+\end{figure}
+
+The following lemma is essential to prove our main theorem.
+
+\begin{lemma}[Lemma~3~in~\cite{holt2006}]
+	\label{lemma:spine is eventualy periodic}
+	The spine, $\mathrm{spine}(\delta) \in \Sigma^\omega$, of a directed automaton automorphism, $\delta \in \mathrm{Dir}(\mathcal{T}_d)$, is eventually periodic, that is, there exists some $\iota = \iota_1 \iota_2 \cdots \iota_s \in \Sigma^*$, called the \emph{initial section}, and
+	$\pi = \pi_1 \pi_2 \cdots \pi_t \in \Sigma^*$, called the \emph{periodic section}, such that $\mathrm{spine}(\delta) = \iota \, \pi^\omega$; and
+	\begin{equation}
+		\label{eq:restrictions along periodic section}
+		\left.
+		\delta
+		\right\vert_{\iota \, \pi^k \, \pi_1 \pi_2 \cdots \pi_j}
+		=
+		\left.
+		\delta
+		\right\vert_{\iota \, \pi_1 \pi_2 \cdots \pi_j}
+	\end{equation}
+	for each $k,j \in \mathbb{N}$ with $0\leq j <t$.
+\end{lemma}
+
+\begin{proof}
+	Let $(\Gamma,v)$ be a $\Sigma$-automaton such that $\delta = \alpha_{(\Gamma,v)}$.
+	By the definition of $\Sigma$-automata, for any given vertex $w = w_1 w_2 \cdots w_k \in \Sigma^*$ of $\mathcal{T}_d$ there exists a vertex $v_w \in \mathrm{V}(\Gamma)$ such that $\delta\vert_w = \alpha_{(\Gamma,v_w)}$.
+	In particular, such a vertex $v_w$ can be obtained by following the path with edges labelled
+	$
+	(w_1, w_1')
+	(w_2, w_2')
+	\cdots
+	(w_k, w_k')
+	$.
+	Then, since there are only finitely many vertices in $\Gamma$, the set of all restrictions of $\delta$ is finite, that is,
+	\begin{equation}\label{eq:finitely many restrictions}
+		\#
+		\left\{
+			\left.\delta\right\vert_w
+			=
+			\alpha_{(\Gamma,v_w)}
+		\mid
+			w \in \Sigma^*
+		\right\}
+		<
+		\infty.
+	\end{equation}
+	Let $b = b_1 b_2 b_3 \cdots = \mathrm{spine}(\delta) \in \Sigma^\omega$ denote the spine of $\delta$.
+	Then, there exists some $n,m \in \mathbb{N}$ with $n < m$ such that
+	\begin{equation}
+		\label{eq:equivalent restrictions}
+		\delta\vert_{b_1 b_2 \cdots b_n}
+		=
+		\delta\vert_{b_1 b_2 \cdots b_n \cdots b_{m}}
+	\end{equation}
+	as otherwise there would be infinitely many distinct restrictions of the form $\delta\vert_{b_1 b_2 \cdots b_k}$ thus contradicting (\ref{eq:finitely many restrictions}).
+	By the definition of the spine, it follows that
+	\[
+	\mathrm{spine}
+	\left(
+	\delta\vert_{b_1 b_2 \cdots b_n}
+	\right)
+	=
+	(b_{n+1}b_{n+2} \cdots b_m)
+	\ 
+	\mathrm{spine}
+	\left(
+	\delta\vert_{b_1 b_2 \cdots b_n \cdots b_{m}}
+	\right).
+	\]
+	Hence, by (\ref{eq:equivalent restrictions}),
+	\[
+	\mathrm{spine}
+	\left(
+	\delta\vert_{b_1 b_2 \cdots b_n}
+	\right)
+	=
+	(b_{n+1}b_{n+2} \cdots b_m)^\omega.
+	\]
+	Thus,
+	\begin{align*}
+		\mathrm{spine}(\delta)
+		&=
+		(b_1 b_2 \cdots b_n)
+		\ 
+		\mathrm{spine}
+		\left(
+		\delta\vert_{b_1 b_2 \cdots b_n}
+		\right)
+		\\&=
+		(b_1 b_2 \cdots b_n)
+		\ 
+		(b_{n+1}b_{n+2} \cdots b_m)^\omega.
+	\end{align*}
+	By taking $\iota = b_1 b_2 \cdots b_n$ and $\pi = b_{n+1} b_{n+2} \cdots b_m$, we have $\mathrm{spine}(\delta) = \iota\,\pi^\omega$.
+	Moreover, from (\ref{eq:equivalent restrictions}), we have equation (\ref{eq:restrictions along periodic section}) as required.
+\end{proof}
+
+Notice that each finitary and directed automata automorphism is also bounded, in fact, we have the following proposition which shows that the generators of any given bounded automata group can be written as words in $\mathrm{Fin}\!\left(\mathcal{T}_d\right)$ and $\mathrm{Dir}\!\left(\mathcal{T}_d\right)$.
+
+\begin{proposition}[Proposition 16 in \cite{sidki2000}]
+	\label{prop:bounded automata group if directed}
+	The group $\mathcal{D}\!\left(\mathcal{T}_d\right)$ of bounded automata automorphisms is generated by $\mathrm{Fin}\!\left(\mathcal{T}_d\right)$ together with $\mathrm{Dir}\!\left(\mathcal{T}_d\right)$.
+\end{proposition}
+
+\subsection{Co-Word Problems}\label{sec:mainthm}
+
+We may now prove the following characterisation of bounded automata groups.
+
+\setcounter{theoremx}{3}
+\TheoremBoundedAutomata
+
+The idea of the proof is straightforward:
+we construct a cspd machine that nondeterministically chooses a vertex $v \in \mathrm{V}(\mathcal{T}_d)$, writing its labels on the check-stack and a copy on its pushdown;
+as it reads letters from input, it uses the pushdown to keep track of where the chosen vertex is moved;
+and finally it checks whether the pushdown and the check-stack differ.
+The full details are as follows.
+
+
+\begin{proof}
+	
+	Let $G \subseteq \mathcal{D}(\mathcal{T}_d)$ be a bounded automata group with finite monoid generating set $X$.
+	By \cref{prop:bounded automata group if directed}, we can define a map
+	\[
+	\varphi\colon
+	X
+	\to
+	\left(
+	\mathrm{Fin}(\mathcal{T}_d) \cup \mathrm{Dir}(\mathcal{T}_d)
+	\right)^*
+	\] so that $x$ and $\varphi(x)$ are equal in $\mathcal{D}(\mathcal{T}_d)$ for each $x \in X$.
+	Let
+	\[
+	Y
+	=
+	\left\{
+		\alpha \in \mathrm{Fin}(\mathcal{T}_d) \cup \mathrm{Dir}(\mathcal{T}_d) 
+	\ \middle|\ 
+		\alpha\text{ or } \alpha^{-1} \text{ is a letter in } \varphi(x) \text{ for some } x \in X
+	\right\}
+	\] which is a finite generating set for a group which contains $G$ as a subgroup.
+	Consider the group $H \subseteq \mathcal{D}(\mathcal{T}_d)$ generated by $Y$.
+	Since ET0L is closed under inverse word homomorphism, it suffices to prove that $\coWP_Y$ is ET0L, as $\coWP_X$ is its inverse image under the mapping $X^* \to Y^*$ induced by  $\varphi$.
+	We construct a cspd machine $\mathcal{M}$ that recognises $\coWP_Y$, thus proving that $G$ is co-ET0L.
+	
+	Let $\alpha = \alpha_1 \alpha_2 \cdots \alpha_n \in Y^*$ denote an input word given to $\mathcal{M}$.
+	The execution of the cspd will be separated into four stages;
+	(1) choosing a vertex $v \in \Sigma^*$ of $\mathcal{T}_d$ which witnesses the non-triviality of $\alpha$ (and placing it on the stacks);
+	(2a)  reading a finitary automorphism from the input tape;
+	(2b)  reading a directed automaton automorphism from the input tape; and
+	(3)  checking that the action of $\alpha$ on $v$ that it has computed is non-trivial.
+	
+	After Stage~1, $\mathcal{M}$ will be in state $q_\mathrm{comp}$.
+	From here, $\mathcal{M}$ nondeterministically decides to either read from its input tape, performing either Stage~2a or 2b and returning to state $q_\mathrm{comp}$; or to finish reading from input by performing Stage~3.
+	
+	We	set both the check-stack and pushdown alphabets to be $\Sigma \cup \{\mathfrak{t}\}$,
+	i.e., we have $\Delta=\Gamma=\Sigma \cup \{\mathfrak{t}\}$.
+	The letter $\mathfrak{t}$ will represent the top of the check-stack.
+	
+	\proofsection{Stage 1: choosing a witness $v = v_1 v_2 \cdots v_m \in \Sigma^*$}
+	
+	If $\alpha$ is non-trivial, then there must exist a vertex $v \in \Sigma^*$ such that $\alpha \cdot v \neq v$.
+	Thus, we nondeterministically choose such a witness from $\mathcal{R} = \Sigma^* \mathfrak{t}$ and store it on the check-stack, where the letter $\mathfrak{t}$ represents the top of the check-stack.
+	
+	From the start state, $q_0$, $\mathcal{M}$ will copy the contents of the check-stack onto the pushdown, then enter the state $q_\mathrm{comp} \in Q$.
+	Formally, this will be achieved by adding the transitions (for each $a \in \Sigma$):
+	\[
+	(
+	(q_0,\varepsilon,(\mathfrak{b},\mathfrak{b})),
+	(q_0,\mathfrak{t}\mathfrak{b})
+	),\,
+	(
+	(q_0,\varepsilon,(a,\mathfrak{t})),
+	(q_0,\mathfrak{t}a)
+	),\,
+	(
+	(q_0,\varepsilon,(\mathfrak{t},\mathfrak{t})),
+	(q_\mathrm{comp},\mathfrak{t})
+	).
+	\]
+	
+	This stage concludes with $\mathcal{M}$ in state $q_{\mathrm{comp}}$, and the read-head pointing to $(\mathfrak t, \mathfrak t)$. 
+	Note that whenever the machine is in state $q_{\mathrm{comp}}$ and $\alpha_1 \alpha_2 \cdots \alpha_k$ has been read from input, then the contents of pushdown will represent the permuted vertex $(\alpha_1 \alpha_2 \cdots \alpha_k) \cdot v$.
+	Thus, the two stacks are initially the same as no input has been read and thus no group action has been simulated.
+	In Stages~2a and 2b, only the height of the check-stack is important, that is, the exact contents of the check-stack will become relevant in Stage~3.
+	
+	\proofsection{Stage~2a: reading a finitary automorphism $\phi \in Y\cap\mathrm{Fin}(\mathcal{T}_d)$}
+	
+	By definition, there exists some $k_\phi = \mathrm{depth}(\phi) \in \mathbb{N}$ such that $\left.\phi\right\vert_u = 1$ for each $u \in \Sigma^*$ for which $\vert u \vert \geq k_\phi$.
+	Thus, given a vertex $v = v_1 v_2 \cdots v_m \in \Sigma^*$, we have
+	\[
+	\phi(v)
+	=
+	\phi(v_1 v_2 \cdots v_{k_\phi})
+	\ 
+	v_{(k_\phi+1)}
+	\cdots
+	v_m.
+	\]
+	
+	Given that $\mathcal{M}$ is in state $q_\mathrm{comp}$ with $\mathfrak{t} v_1 v_2 \cdots v_m \mathfrak{b}$ on its pushdown, we will read $\phi$ from input, move to state $q_{\phi,\varepsilon}$ and pop the $\mathfrak{t}$;
+	we will then pop the next $k_\phi$ (or fewer if $m < k_\phi$) letters off the pushdown, and as we are popping these letters we visit the sequence of states $q_{\phi,v_1}$, $q_{\phi,v_1 v_2}$, \dots, $q_{\phi,v_1 v_2 \cdots v_{k_\phi}}$.
+	From the final state in this sequence, we then push $\mathfrak t\phi(v_1\cdots v_{k_\phi})$ onto the pushdown, and return to the state $q_{\mathrm{comp}}$.
+	
+	Formally, for letters $a,b \in \Sigma$, $\phi \in Y\cap\mathrm{Fin}(\mathcal{T}_d)$, and vertices $u,w\in\Sigma^*$ where $ |u|< k_\phi$ and $ |w|=k_\phi$, we have the transitions
+	\[
+	(
+	(q_{\mathrm{comp}}, \phi, (\mathfrak{t},\mathfrak{t})),
+	(q_{\phi,\varepsilon}, \varepsilon)
+	), \ 
+	(
+	(q_{\phi,u}, \varepsilon, (a,b)),
+	(q_{\phi, ub}, \varepsilon)
+	),
+	\]
+	\[
+	(
+	(q_{\phi,  w}, \varepsilon, (\varepsilon,\varepsilon)),
+	(q_\mathrm{comp}, \mathfrak{t}\phi(w))
+	)
+	\]
+	for the case where $m > k_\phi$, and
+	\[
+	(
+	(q_{\phi, u}, \varepsilon, (\mathfrak{b},\mathfrak{b})),
+	(q_\mathrm{comp}, \mathfrak{t}\phi(u)\mathfrak{b})
+	)
+	\]
+	for the case where $m \leq k_\phi$.
+	Notice that we have finitely many states and transitions  since $Y,$ $\Sigma$ and each $k_\phi$ is finite.
+	
+	\proofsection{Stage~2b: reading a directed automorphism $\delta \in Y\cap\mathrm{Dir}(\mathcal{T}_d)$}
+	
+	By \cref{lemma:spine is eventualy periodic}, there exists some $\iota = \iota_1 \iota_2 \cdots \iota_s \in \Sigma^*$ and $\pi = \pi_1 \pi_2 \cdots \pi_t \in \Sigma^*$ such that
+	$
+	\mathrm{spine}(\delta)
+	=
+	\iota \, \pi^\omega
+	$
+	and
+	\[
+	\delta(\iota\pi^\omega)
+	=
+	I_1 I_2 \cdots I_s
+	\,
+	\left( \Pi_1 \Pi_2 \cdots \Pi_t \right)^\omega
+	\]
+	where
+	\[
+	I_i
+	=
+	\left. \delta \right\vert_{\iota_1 \iota_2 \cdots \iota_{i-1}} (\iota_i)
+	%
+	\qquad
+	%
+	\text{and}
+	%
+	\qquad
+	%
+	\Pi_j
+	=
+	\left. \delta \right\vert_{\iota \, \pi_1 \pi_2 \cdots \pi_{j-1}}\!(\pi_j).
+	\]
+	
+	Given some vertex $v = v_1 v_2 \cdots v_m \in \Sigma^*$, let $\ell \in \mathbb{N}$ be largest such that $p = v_1 v_2 \cdots v_\ell$ is a prefix of the sequence $\iota\pi^\omega = \mathrm{spine}(\delta)$.
+	Then by  definition of directed automorphism, $\delta' = \delta\vert_p$ is directed and $\phi = \delta\vert_a$, where $a = v_{\ell}$, is finitary.
+	Then, either $p = \iota_1 \iota_2 \cdots \iota_\ell$ and 
+	\[
+	\delta(v)
+	=
+	(I_1 I_2 \cdots I_\ell)
+	\ 
+	\delta'(a)
+	\ 
+	\phi(v_{\ell+2} v_{\ell+3} \cdots v_m),
+	\]
+	or $p = \iota\pi^k\pi_1\pi_2\cdots\pi_j$, with $\ell = |\iota|+k\cdot|\pi| + j$, and 
+	\[
+	\delta(v)
+	=
+	(I_1 I_2 \cdots I_s)
+	\,
+	(\Pi_1 \Pi_2 \cdots \Pi_t)^k
+	\,
+	(\Pi_1 \Pi_2 \cdots \Pi_j)
+	\ 
+	\delta'(a)
+	\ 
+	\phi( v_{\ell+2} v_{\ell+3} \cdots v_m).
+	\]
+	
+	Hence, from state $q_\mathrm{comp}$ with $\mathfrak{t} v_1 v_2 \cdots v_m \mathfrak{b}$ on its pushdown, $\mathcal M$ reads $\delta$ from input, moves to state $q_{\delta,\iota,0}$ and pops the $\mathfrak{t}$;
+	it then pops $pa$ off the pushdown, using states to remember the letter $a$ and the part of the prefix to which the final letter of $p$ belongs (i.e.\@ $\iota_i$ or $\pi_j$).
+	From here, $\mathcal{M}$ performs the finitary automorphism $\phi$ on the remainder of the pushdown (using the same construction as Stage~2a), then, in a sequence of transitions, pushes $\mathfrak{t}\delta(p)\delta'(a)$ and returns to state $q_\mathrm{comp}$.
+	The key idea here is that, using only the knowledge of the letter $a$, the part of $\iota$ or $\pi$ to which the final letter of $p$ belongs, and the height of the check-stack, that $\mathcal M$ is able to recover $\delta(p)\delta'(a)$.
+	
+	We now give the details of the states and transitions involved in this stage of the construction.
+	
+	We have states $q_{\delta,\iota,i}$ and $q_{\delta,\pi,j}$ with $0 \leq i \leq \vert \iota \vert$, $1 \leq j \leq \vert \pi \vert$; where $q_{\delta,\iota,i}$ represents that the word $\iota_1 \iota_2 \cdots \iota_i$ has been popped off the pushdown, and $q_{\delta,\pi,j}$ represents that a word $\iota\pi^k\pi_1\pi_2\cdots \pi_j$ for some $k \in \mathbb{N}$ has been popped of the pushdown.
+	Thus, we begin with the transition
+	\[
+	(
+	(q_\mathrm{comp}, \delta, (\mathfrak{t},\mathfrak{t})),
+	(q_{\delta,\iota,0},\varepsilon)
+	),
+	\]
+	then for each $i,j\in \mathbb{N}$, $a \in \Sigma$ with $0 \leq i < \vert \iota \vert$ and $1 \leq j < \vert \pi \vert$, we have transitions
+	\begin{align*}
+		(
+		(q_{\delta,\iota,i}, \varepsilon, (a,\iota_{i+1})),
+		(q_{\delta,\iota,(i+1)},\varepsilon)
+		),&\ \ 
+		(
+		(q_{\delta,\iota,|\iota|}, \varepsilon, (a,\pi_1)),
+		(q_{\delta,\pi,1},\varepsilon)
+		),
+		\\
+		(
+		(q_{\delta,\pi,j}, \varepsilon, (a,\pi_{j+1})),
+		(q_{\delta,\pi,(j+1)},\varepsilon)
+		),&\ \ 
+		(
+		(q_{\delta,\pi,|\pi|}, \varepsilon, (a,\pi_1)),
+		(q_{\delta,\pi,1},\varepsilon)
+		)
+	\end{align*}
+	to consume the prefix $p$.
+	
+	After this,  $\mathcal{M}$ will either be at the bottom of its stacks, or its read-head will see a letter on the pushdown that is not the next letter in the spine of $\delta$.
+	Thus, for each $i,j \in \mathbb{N}$ with $0 \leq i \leq \vert \iota \vert$ and $1 \leq j \leq |\pi|$ we have states $q_{\delta,\iota,i,a}$ and $q_{\delta,\pi,j,a}$;
+	and for each $b \in \Sigma$ we have transitions
+	\[
+	(
+	(q_{\delta,\iota,i}, \varepsilon, (b,a)),
+	(q_{\delta,\iota,i,a},\varepsilon)
+	)
+	\]
+	where $a \neq \iota_{i+1}$ when $i < |\iota|$ and $a \neq \pi_1$ otherwise, and
+	\[
+	(
+	(q_{\delta,\pi,j}, \varepsilon, (b,a)),
+	(q_{\delta,\pi,j,a},\varepsilon)
+	)
+	\]
+	where $a \neq \pi_{j+1}$ when $j < |\pi|$ and $a \neq \pi_1$ otherwise.
+	
+	Hence, after these transitions, $\mathcal{M}$ has consumed $pa$ from its pushdown and will either be at the bottom of its stacks in some state $q_{\delta,\iota,i}$ or $q_{\delta,\pi,j}$; or will be in some state $q_{\delta,\iota,i,a}$ or $q_{\delta,\pi,j,a}$.
+	Note here that, if $\mathcal{M}$ is in the state $q_{\delta,\iota,i,a}$ or $q_{\delta,\pi,j,a}$, then from \cref{lemma:spine is eventualy periodic} we know $\delta' = \delta\vert_{p}$ is equivalent to $\delta\vert_{\iota_1 \iota_2\cdots \iota_i}$ or $\delta\vert_{\iota \pi_1 \pi_2 \cdots \pi_j}$, respectively; and further, we know the finitary automorphism $\phi = \delta\vert_{pa} = \delta'\vert_a$.
+	
+	Thus, for each state $q_{\delta,\iota,i,a}$ and $q_{\delta,\pi,a}$ we will follow a similar construction to Stage~2a, to perform the finitary automorphism $\phi$ to the remaining letters on the pushdown, then push $\delta'(a)$ and return to the state $r_{\delta,\iota,i}$ or $r_{\delta,\pi,j}$, respectively.
+	For the case where $\mathcal{M}$ is at the bottom of its stacks we have transitions
+	\[
+	(
+	(q_{\delta,\iota,i}, \varepsilon, (\mathfrak{b},\mathfrak{b})),
+	(r_{\delta,\iota,i}, \mathfrak{b})
+	),\ \ 
+	(
+	(q_{\delta,\pi,i}, \varepsilon, (\mathfrak{b},\mathfrak{b})),
+	(r_{\delta,\pi,i}, \mathfrak{b})
+	)
+	\]
+	with $0 \leq i \leq |\iota|$, $1 \leq j \leq |\pi|$.
+	
+	Thus, after following these transitions, $\mathcal{M}$ is in some state $r_{\delta,\iota,i}$ or $r_{\delta,\pi,j}$ and all that remains is for $\mathcal{M}$ to push $\delta(p)$ with $p = \iota_1 \iota_2\cdots \iota_i$ or $p = \iota\pi^k\pi_1 \pi_2\cdots \pi_k$, respectively, onto its pushdown.
+	Thus, for each $i,j\in \mathbb{N}$ with $0 \leq i \leq |\iota|$ and $1 \leq j \leq |\pi|$, we have transitions
+	\[
+	(
+	(r_{\delta,\pi,i}, \varepsilon,(\varepsilon,\varepsilon)),
+	(q_\mathrm{comp}, \mathfrak{t} I_1 I_2 \cdots I_i)
+	),
+	\ \ 
+	(
+	(r_{\delta,\pi,j}, \varepsilon,(\varepsilon,\varepsilon)),
+	(r_{\delta,\pi}, \Pi_1 \Pi_2 \cdots \Pi_j)
+	)
+	\]
+	where from the state $r_{\delta,\pi}$, through a sequence of transitions, $\mathcal{M}$ will push the remaining $I\Pi^k$ onto the pushdown.
+	In particular, we have transitions
+	\[
+	(
+	(r_{\delta,\pi}, \varepsilon,(\varepsilon,\varepsilon)),
+	(r_{\delta,\pi},\Pi)
+	),
+	\ \ 
+	(
+	(r_{\delta,\pi}, \varepsilon,(\varepsilon,\varepsilon)),
+	(q_\mathrm{comp},\mathfrak{t}I)
+	),
+	\]
+	so that $\mathcal{M}$ can nondeterministically push some number of $\Pi$'s followed by $\mathfrak{t}I$  before it finishes this stage of the computation.
+	We can assume that the machine pushes the correct number of $\Pi$'s onto its pushdown as otherwise it will not see $\mathfrak{t}$ on its check-stack while in state $q_\mathrm{comp}$ and thus would not be able to continue with its computation, as every subsequent stage (2a,2b,3) of the computation begins with the read-head pointing to $\mathfrak{t}$ on both stacks.
+	
+	Once again it is clear that this stage of the construction requires only finitely many states and transitions.
+	
+	\proofsection{Stage~3: checking that the action is non-trivial}
+	
+	At the beginning of this stage, the contents of the check-stack represent the chosen witness, $v$, and the contents of the pushdown represent the action of the input word, $\alpha$, on the witness, i.e., $\alpha \cdot v$.
+	
+	In this stage $\mathcal{M}$  checks if the contents of its check-stack and pushdown differ.
+	Formally, we have states $q_\mathrm{accept}$ and  $q_{\mathrm{check}}$, with $q_\mathrm{accept}$ accepting;
+	for each $a \in \Sigma$, we have transitions
+	\[
+	(
+	(q_\mathrm{comp}, \varepsilon, (\mathfrak{t},\mathfrak{t})),
+	(q_\mathrm{check}, \varepsilon)
+	),
+	\ \ 
+	(
+	(q_\mathrm{check}, \varepsilon, (a,a)),
+	(q_\mathrm{check}, \varepsilon)
+	)
+	\]
+	to pop identical entries of the pushdown; and for each $(a,b) \in \Sigma \times \Sigma$ with $a \neq b$ we have a transition
+	\[
+	(
+	(q_\mathrm{check},\varepsilon,(a,b)),
+	(q_\mathrm{accept},\varepsilon)
+	)
+	\]
+	to accept if the stacks differ by a letter.
+	
+	Observe that if the two stacks are identical, then there is no path to the accepting state, $q_\mathrm{accept}$, and thus $\mathcal{M}$ will reject.
+	Notice also that by definition of cspd automata, if $\mathcal M$ moves into  $q_{\mathrm{check}}$ before all input has been read, then $\mathcal{M}$ will not accept, i.e., an accepting state is only effective if all input is consumed.
+	
+	\proofsection{Soundness and Completeness}
+	
+	If $\alpha$ is non-trivial, then there is a vertex $v \in \Sigma^*$ such that $\alpha \cdot v \neq v$, which $\mathcal{M}$ can nondeterministically choose to write on its check-stack and thus accept $\alpha$.
+	If $\alpha$ is trivial, then $\alpha \cdot v = v$ for each vertex $v \in \Sigma^*$, and there is no choice of checking stack for which $\mathcal{M}$ will accept, so $\mathcal{M}$ will reject.
+	
+	Thus, $\mathcal{M}$ accepts a word if and only if it is in $\coWP_Y$.
+\end{proof}
+
+\section{Open Problems and Concluding Remarks}
+
+\Cref{thm:bounded automata is ET0L} opens the door to a new characterisation of groups by their co-word problem.
+In particular, this result is a step towards a characterisation of groups with ET0L co-word problems.
+However, it still remains to be shown that there is a group whose co-word problem is ET0L but not context-free.
+It is conjectured~\cite[2]{bleak2016} that Grigorchuk's group does not have a context-free co-word problem.
+Thus, we ask the following.
+
+\begin{question}
+	Is the co-word problem for Grigorchuk's group (or some other bounded automata group) not context-free?
+\end{question}
+
+It is then natural to ask if there is a classification of co-ET0L groups.

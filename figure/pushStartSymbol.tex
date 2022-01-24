@@ -1,0 +1,53 @@
+\documentclass[tikz]{standalone}
+
+\usetikzlibrary{decorations.pathreplacing,shapes.multipart}
+
+\usepackage{amssymb,stmaryrd}
+
+\makeatletter
+\DeclareRobustCommand{\rvdots}{%
+	\vbox{
+		\baselineskip4\p@\lineskiplimit\z@
+		\kern-\p@
+		\hbox{.}\hbox{.}\hbox{.}
+}}
+\makeatother
+
+\begin{document}
+\begin{tikzpicture}[>=stealth,every text node part/.style={align=center}]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\draw [draw=none,fill=none] (0,3) rectangle node {$\rvdots$} +(1,1);
+
+\draw [fill=none] (0, 0) rectangle node {$\mathfrak{b}$}  +(1,1);
+\draw [fill=none] (0,1) rectangle node {$\alpha_1$} +(1,1);
+\draw [fill=none] (0,2) rectangle node {$\alpha_2$} +(1,1);
+\draw [fill=none] (0,4) rectangle node {$\alpha_n$} +(1,1);
+\draw [fill=none] (0,5) rectangle node {$\mathfrak{t}$}  +(1,1);
+
+\draw (0,6) to node[above]{check-stack\vphantom{pushdowncheck-stack}} +(1,0);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\draw [draw=none,fill=none] (3,3) rectangle node {$\rvdots$} +(1,1);
+
+\draw [draw=none,fill=lightgray] (3,2) rectangle +(1,1);
+\draw [draw=none,fill=lightgray] (3,4) rectangle +(1,2);
+
+\draw [fill=none] (3,0) rectangle node {$\mathfrak{b}$}  +(1,1);
+\draw [fill=none] (3,1) rectangle node {$\llbracket S \rrbracket$} +(1,1);
+
+\draw (3,3) -- (3,0) -- (4,0) -- (4,3);
+\draw (3,4) -- (3,6) -- (4,6) -- (4,4);
+
+\draw (3,6) to node[above] {pushdown\vphantom{pushdowncheck-stack}} +(1,0);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\node(rh) at (2,1.5) {read\\head};
+\draw[->] (rh) -- +(-1,0);
+\draw[->] (rh) -- +(1,0);
+
+\end{tikzpicture}
+\end{document}
