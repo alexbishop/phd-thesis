@@ -23,4 +23,4 @@ latexmk -pdf -interaction=nonstopmode
 
 ## Download Compiled Version
 
-You can [download a compiled version of the thesis](https://github.com/alexbishop/phd-thesis/releases/download/v1.0.0/main.pdf) from the [GitHub Releases page](https://github.com/alexbishop/phd-thesis/releases).
+You can [download a compiled version of the thesis](https://github.com/alexbishop/phd-thesis/releases/download/v1.0.2/main.pdf) from the [GitHub Releases page](https://github.com/alexbishop/phd-thesis/releases).
