@@ -9,17 +9,7 @@ This repo contains the PhD thesis of [Alex Bishop](https://alexbishop.github.io)
 
 ## Compiling the Thesis
 
-To compile the thesis, first, you must compile all the figures in the `figure` directory:
-```
-# from within the phd-thesis directory
-cd figure
-latexmk -pdf -interaction=nonstopmode *.tex
-cd ..
-```
-The thesis may then be compiled by issuing the command
-```sh
-latexmk -pdf -interaction=nonstopmode
-```
+To compile the thesis, simply run the following command `latexmk` from within the top directory of this repo.
 
 ## Download Compiled Version
 
